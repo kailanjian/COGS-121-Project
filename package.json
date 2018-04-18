@@ -1,0 +1,22 @@
+{
+  "name": "cogs-121-project",
+  "version": "1.0.0",
+  "description": "COGS 121 Project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kailanjian/COGS-121-Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kailanjian/COGS-121-Project/issues"
+  },
+  "homepage": "https://github.com/kailanjian/COGS-121-Project#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
