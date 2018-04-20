@@ -1,6 +1,13 @@
 const express = require('express');
+const path = require('path');
+const ejs = require('ejs');
+var partials = require('express-partials');
 
 const app = express();
+
+app.set('view engine', 'ejs');
+app.use(partials());
+
 
 // directory for public webpages, i.e. front-end
 app.use(express.static('public'));
@@ -10,7 +17,7 @@ app.use(express.static('public'));
 const fakeDatabase = {
     'Philip': {job: 'professor', pet: 'cat.jpg'},
       'John': {job: 'student',   pet: 'dog.jpg'},
-        'Carol': {job: 'engineer',  pet: 'bear.jpg'}
+     'Carol': {job: 'engineer',  pet: 'bear.jpg'}
 };
 
 
@@ -46,6 +53,43 @@ app.get('/users/:userid', (req, res) => {
                   } else {
                         res.send({}); // failed, so return an empty object instead of undefined
                           }
+});
+
+/*
+app.get('/index', (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
+*/
+
+/*
+
+ROUTING GETS
+
+the get requests for the pages will render and display here
+copy the format of the root request ('/') for all the other pages
+
+*/
+
+// home page (/)
+app.get('/', (req, res) => {
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'boi',
+    // set page to render in layout
+    page: 'pages/index.ejs'
+  });
+});
+
+// data page (/data) (example page)
+app.get('/data', (req, res) => {
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'Data',
+    // set page to render in layout
+    page: 'pages/data.ejs'
+  });
 });
 
 // start the server at URL: http://localhost:3000/
