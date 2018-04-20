@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/kailanjian/COGS-121-Project#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "nodemon": "^1.17.3"
   }
 }
