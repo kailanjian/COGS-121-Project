@@ -6,8 +6,7 @@ IMPORT EVERYTHING
 const express = require('express'); // used for express.js
 const path = require('path'); // allows filesystem access, and directory helper methods
 const ejs = require('ejs'); // Effective JS layouts, our template rendering engine
-const partials = require('express-partials'); // used with ejs to render partial layouts
-const expre
+const partials = require('express-partials'); // used with ejs to render partial layout
 
 var MongoClient = require('mongodb').MongoClient; // mongo driver
 
@@ -62,9 +61,9 @@ app.set('view engine', 'ejs');
 app.use(partials());
 // body parser is important so forms can pass in data to node
 app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
-//app.use(passport.session());
-app.use(session({secret : 'anything'}));
+app.use(passport.session());
 
 
 // directory for public webpages, i.e. front-end
