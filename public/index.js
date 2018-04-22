@@ -5,6 +5,10 @@ $(document).ready(function() {
   for (let i=0; i<10; i++)
   {
     console.log("for");
-    $(".garbage").append($(".voytek").clone());
+//j    $(".garbage").append($(".voytek").clone());
   }
+  $.get("api/user", (data) => {
+
+    console.log(data);
+  });
 });
