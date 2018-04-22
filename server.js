@@ -129,6 +129,22 @@ app.get('/api/user', (req, res) => {
   }
 });
 
+const text = `The purpose of the quarter-long project is to give you hands-on experience with building a full-stack web application with the following basic components:
+
+A server backend
+A database
+Connecting to external APIs
+A frontend that loads data from backend without page refreshes (Ajax)
+Using a data visualization library or API on the frontend
+
+(We will not place as much emphasis on the concepts in the What will we not cover in this course? section at the bottom of the course description page.)`
+
+app.get('/api/text', (req, res) => {
+  res.send(text);
+});
+
+
+
 /*
 
 ROUTING GETS
