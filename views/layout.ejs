@@ -9,6 +9,9 @@
   </head>
   <body>
     <%- include(page) %>
-    <%- include ../partials/nav.ejs %>
+
+    <%if (!locals.hideNav) { %>
+      <%- include ../partials/nav.ejs %>
+    <% } %>
   </body>
 </html>
