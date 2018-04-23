@@ -1,0 +1,96 @@
+* {
+  margin:0;
+}
+
+header{
+  position: fixed;
+  height: 48px;
+  width: 100%;
+  background-color: #cccccc;
+}
+
+header h1{
+  position:absolute;
+  text-align:center;
+  width:100%;
+  display:inline-block;
+
+}
+
+.progress{
+  display:inline-block;
+  float:right;
+  height: 48px;
+  width: 60px;
+  background-color: #808080;
+}
+
+.all_plans{
+  display:inline-block;
+  float:left;
+  height: 48px;
+  width: 60px;
+  background-color: #808080;
+}
+
+.all_books{
+   position: absolute;
+   top: 64px;
+   width:100%;
+}
+   
+  
+.book{
+  position: relative;
+  margin-bottom:16px;
+  height: 48px;
+  width: 85%;
+  margin-right: auto;
+  margin-left: auto;
+  border:5px black;
+  background-color: #cccccc;
+}
+
+.book h2{
+  position: relative;
+  padding-left: 8px;
+}
+
+
+.chapters{
+  position:relative;
+  height: 80px;
+  background-color: #999999
+}
+
+.chapters p{
+   padding-left: 16px;
+   padding-right: 16px;
+   padding-top: 8px;
+   padding-bottom: 8px;
+   display:inline-block;
+}
+
+ #resume_button{
+  position:absolute;
+  display: block;
+  position:absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+#navbar {
+	  list-style-type: none;
+    background-color: black;
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    bottom: 0;
+    width: 100%;
+    text-align:center;
+}
+
+#navbar li{  
+    display: inline-block; 
+    padding: 16px 48px;
+}
