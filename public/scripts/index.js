@@ -1,10 +1,12 @@
 // main javascript file
 // Note: ALL VARIABLES HERE WILL BE GLOBAL
 let isText = false;
+let isStats = false;
 
 
 $(document).ready(function() {
   $(".text").hide();
+  $(".graph").hide();
   $("#resume_button").click(() => {
     console.log("click");
     $.get("/api/text", (data) => {
@@ -18,6 +20,10 @@ $(document).ready(function() {
   $("#back").click(() => {
     toggleMode();
   });
+
+  $("#stats").click(() => {
+    toggleStats();
+  });
 });
 
 function toggleMode() {
@@ -28,5 +34,13 @@ function toggleMode() {
     $(".text").hide();
     $(".plans").show();
   }
-  isText = !isText;
+  isText = !isText; 
+}
+function toggleStats(){
+  if(isStats == true){
+    $(".graph").hide()
+  } else {
+    $(".graph").show()
+  }
+  isStats = !isStats;
 }
