@@ -159,7 +159,7 @@ app.get(/^\/(index)?$/, (req, res) => {
   // render with ejs
   res.render('layout', {
     // set title
-    title: 'boi',
+    title: 'Home',
     // set page to render in layout
     page: 'pages/index.ejs'
   });

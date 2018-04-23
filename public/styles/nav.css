@@ -6,4 +6,13 @@
   height: 50px;
   font-size: 20pt;
   background-color: gray;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.nav-link, .nav-link:hover {
+  color: black;
+  width: 20%;
 }
