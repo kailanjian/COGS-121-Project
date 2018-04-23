@@ -182,6 +182,7 @@ app.get('/login', (req, res) => {
   res.render('layout', {
     // set title
     title: 'Login',
+    hideNav: true,
     // set page to render in layout
     page: 'pages/login.ejs'
   });
