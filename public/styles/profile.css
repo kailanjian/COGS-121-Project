@@ -1,0 +1,53 @@
+.centered {
+    text-align: center;
+    width: 100%;
+}
+
+.circle-stat-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    font-size: .7rem;
+    background-color: cadetblue;
+    display: inline-block;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-title {
+    padding-top: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.small-box {
+    width: 10px;
+    height: 10px;
+    background-color: cadetblue;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.profile-small-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.profile-chart {
+    width: 95%;
+    height: 150px;
+    display: inline-block;
+    background-color: cadetblue;
+    margin-top: 1.5rem;
+}
+
+.logout-button {
+    width: 95%;
+    display: inline-block;
+    height: 30px;
+    border-radius: 15px;
+    background-color: orangered;
+    margin-top: 1.5rem;
+}
