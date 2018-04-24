@@ -9,11 +9,17 @@ const ejs = require('ejs'); // Effective JS layouts, our template rendering engi
 const partials = require('express-partials'); // used with ejs to render partial layout
 
 var MongoClient = require('mongodb').MongoClient; // mongo driver
+const mongoose = require('mongoose');
 
 // this URL allows you to connect to the db, to the admin user. Use in your local session
 // if you want to manipulate the DB
-const db = "mongodb://admin:password@ds253879.mlab.com:53879/keimena";
+const dburl = "mongodb://admin:password@ds253879.mlab.com:53879/keimena";
+mongoose.connect(dburl);
+const db = mongoose.connection;
 
+// mongoose collections
+// (initialized later)
+let User;
 
 /* 
 
@@ -31,21 +37,32 @@ passport.use(new LocalStrategy(
       // TODO: auth username and password against our DB
       console.log("authenticating with passport");
 
+      User.findOne({username: username}, (err, user) => {
+        if (user.password == password)
+        {
+          return done(null, user)
+        }
+        else
+        {
+          return done("error authenticating");
+        }
+      });
       // TODO: return correct user object when user is done or return err
-      return done(null, username);
   }
 ));
 
 // serialize user object into something to save
 passport.serializeUser(function(user, cb) {
   console.log("deserializing");
-  cb(null, user);
+  cb(null, user._id);
 });
 
 // deserialize serialized user object
-passport.deserializeUser(function(user, cb) {
+passport.deserializeUser(function(id, cb) {
   console.log("deserializing");
-  cb(null, user);
+  User.findById(id, (err, user) => {
+    cb(null, user);
+  });
 });
 
 
@@ -69,29 +86,35 @@ app.use(passport.session());
 // directory for public webpages, i.e. front-end
 app.use(express.static('public'));
 
-
-// mock database
-const fakeDatabase = {
-    'Philip': {job: 'professor', pet: 'cat.jpg'},
-      'John': {job: 'student',   pet: 'dog.jpg'},
-     'Carol': {job: 'engineer',  pet: 'bear.jpg'}
-};
-
-// SAMPLE CODE
-// GET a list of all usernames from fake dbe
-//
-// To test, open this URL in your browser:
-//   http://localhost:3000/users
-app.get('/users', (req, res) => {
-    const allUsernames = Object.keys(fakeDatabase); // returns a list of object keys
-      console.log('allUsernames is:', allUsernames);
-        res.send(allUsernames);
-});
-
-
 app.post('/login', passport.authenticate('local'), function(req, res) {
   console.log(req.user);
   res.redirect('/');
+});
+
+app.post('/register', (req, res) => {
+  let username = req.body.username;
+  let password = req.body.password;
+
+  let user = new User(
+    {username: username, 
+      password: password});
+
+  User.findOne({username: username}, (err, match) => {
+    if (match || err)
+    {
+      console.log("cannot register user");      
+      // TODO send error somehow
+      res.redirect('/login');
+    }
+    else
+    {
+      user.save((err, user) => {
+        if (err) console.log("problem adding user");
+      });
+      res.redirect('/');
+    }
+  });
+
 });
 
 
@@ -103,13 +126,17 @@ app.post('/login', passport.authenticate('local'), function(req, res) {
 //   http://localhost:3000/users/invalidusername
 app.get('/users/:userid', (req, res) => {
   const nameToLookup = req.params.userid; // matches ':userid' above
-  const val = fakeDatabase[nameToLookup];
-  console.log(nameToLookup, '->', val); // for debugging
-  if (val) {
-    res.send(val);
-  } else {
-    res.send({}); // failed, so return an empty object instead of undefined
-  }
+  
+  User.findOne({username: nameToLookup}, (err, match) => {
+    if (match) 
+    {
+      res.send(match);
+    }
+    else
+    {
+      res.send({error: "user not found"});
+    }
+  });
 });
 
 /*
@@ -221,7 +248,23 @@ app.get('/read', (req, res) => {
   });
 });
 
-// start the server at URL: http://localhost:3000/
-app.listen(3000, () => {
-    console.log('Server started at http://localhost:3000/');
+
+// initialize db and start app 
+db.once('open', function(){
+  // connected to db
+  console.log("database initialized")
+
+  var userSchema = mongoose.Schema({
+    username: String,
+    password: String,
+    data: Object 
+  });
+
+  /* initialize collections */
+  User = mongoose.model('User', userSchema);
+
+  // start the server at URL: http://localhost:3000/
+  app.listen(3000, () => {
+      console.log('Server started at http://localhost:3000/');
+  });
 });
