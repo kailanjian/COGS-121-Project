@@ -7,7 +7,7 @@ $(document).ready(function() {
     $.get("/api/text", (data) => {
       console.log("api get");
       console.log(data);
-      $(".content").html(data);
+      $(".content").html(data.passages[0]);
       toggleMode();
     });
   });

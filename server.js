@@ -20,6 +20,7 @@ const db = mongoose.connection;
 
 // the tongue is like a flame
 const bibleurl = "http://api.esv.org/v3/passage/text/?q=";
+const bibleOptions = "&include-crossrefs=false&attach-audio-link-to=heading&include-short-copyright=false&include-copyright=false";
 const bibleToken = "e47bdf3fcb120666e61cd06ca194b8ac3f733aa7";
 
 // mongoose collections
@@ -156,13 +157,14 @@ app.get('/api/user', (req, res) => {
 });
 
 
-app.get('/api/text', (req, res) => {
+app.get('/api/text', (req, sres) => {
     let text = '';
     https.get({
-        path: "https://api.esv.org/v3/passage/text/?q=Luke%209",
-        headers: {
-            "Authentication": "Token e47bdf3fcb120666e61cd06ca194b8ac3f733aa7"
-        }
+        protocol: "https:",
+        host: "api.esv.org",
+        path: "/v3/passage/html/?q=Luke%209%2023-25" + bibleOptions,
+        rejectUnauthorized: false,
+        headers: {"Authorization": "Token " + bibleToken}
     }, function (res) {
         let body = '';
         res.on('data', function (chunk) {
@@ -170,16 +172,12 @@ app.get('/api/text', (req, res) => {
         });
 
         res.on('end', function () {
-            let response = JSON.parse(body);
-            console.log("response: ", response);
+            text = JSON.parse(body);
+            sres.send(text);
         });
-
-        text = body;
     }).on('error', function (e) {
         console.log("Error:", e);
     });
-    console.log(text);
-    res.send(text);
 })
 ;
 
