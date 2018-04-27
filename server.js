@@ -4,6 +4,7 @@ IMPORT EVERYTHING
 
 */
 const express = require('express'); // used for express.js
+const https = require('https');
 const path = require('path'); // allows filesystem access, and directory helper methods
 const ejs = require('ejs'); // Effective JS layouts, our template rendering engine
 const partials = require('express-partials'); // used with ejs to render partial layout
@@ -16,6 +17,11 @@ const mongoose = require('mongoose');
 const dburl = "mongodb://admin:password@ds253879.mlab.com:53879/keimena";
 mongoose.connect(dburl);
 const db = mongoose.connection;
+
+// the tongue is like a flame
+const bibleurl = "http://api.esv.org/v3/passage/text/?q=";
+const bibleOptions = "&include-crossrefs=false&attach-audio-link-to=heading&include-short-copyright=false&include-copyright=false";
+const bibleToken = "e47bdf3fcb120666e61cd06ca194b8ac3f733aa7";
 
 // mongoose collections
 // (initialized later)
@@ -30,10 +36,11 @@ SETUP PASSPORT
 
 // passport is the module which provides authentication
 const passport = require('passport'),
-      LocalStrategy = require('passport-local').Strategy;
+    LocalStrategy = require('passport-local').Strategy;
 
 // auth strategy for our setup
 passport.use(new LocalStrategy(
+<<<<<<< HEAD
   function(username, password, done) {
       // TODO: auth username and password against our DB
       console.log("authenticating with passport");
@@ -54,20 +61,36 @@ passport.use(new LocalStrategy(
       });
       // TODO: return correct user object when user is done or return err
   }
+=======
+    function (username, password, done) {
+        // TODO: auth username and password against our DB
+        console.log("authenticating with passport");
+
+        User.findOne({username: username}, (err, user) => {
+            if (user.password == password) {
+                return done(null, user)
+            }
+            else {
+                return done("error authenticating");
+            }
+        });
+        // TODO: return correct user object when user is done or return err
+    }
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 ));
 
 // serialize user object into something to save
-passport.serializeUser(function(user, cb) {
-  console.log("deserializing");
-  cb(null, user._id);
+passport.serializeUser(function (user, cb) {
+    console.log("deserializing");
+    cb(null, user._id);
 });
 
 // deserialize serialized user object
-passport.deserializeUser(function(id, cb) {
-  console.log("deserializing");
-  User.findById(id, (err, user) => {
-    cb(null, user);
-  });
+passport.deserializeUser(function (id, cb) {
+    console.log("deserializing");
+    User.findById(id, (err, user) => {
+        cb(null, user);
+    });
 });
 
 const checkLoginMiddleware = function (req, res, next) {
@@ -98,8 +121,8 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(partials());
 // body parser is important so forms can pass in data to node
-app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(require('body-parser').urlencoded({extended: true}));
+app.use(require('express-session')({secret: 'keyboard cat', resave: false, saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session());
 //app.use(checkLoginMiddleware);
@@ -108,9 +131,9 @@ app.use(passport.session());
 // directory for public webpages, i.e. front-end
 app.use(express.static('public'));
 
-app.post('/login', passport.authenticate('local'), function(req, res) {
-  console.log(req.user);
-  res.redirect('/');
+app.post('/login', passport.authenticate('local'), function (req, res) {
+    console.log(req.user);
+    res.redirect('/');
 });
 
 app.get('/logout', function(req, res){
@@ -119,6 +142,7 @@ app.get('/logout', function(req, res){
 });
 
 app.post('/register', (req, res) => {
+<<<<<<< HEAD
   let username = req.body.username;
   let password = req.body.password;
 
@@ -165,6 +189,30 @@ app.post('/register', (req, res) => {
       });
     }
   });
+=======
+    let username = req.body.username;
+    let password = req.body.password;
+
+    let user = new User(
+        {
+            username: username,
+            password: password
+        });
+
+    User.findOne({username: username}, (err, match) => {
+        if (match || err) {
+            console.log("cannot register user");
+            // TODO send error somehow
+            res.redirect('/login');
+        }
+        else {
+            user.save((err, user) => {
+                if (err) console.log("problem adding user");
+            });
+            res.redirect('/');
+        }
+    });
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 
 });
 
@@ -175,6 +223,7 @@ app.post('/register', (req, res) => {
 //   http://localhost:3000/users/Philip
 //   http://localhost:3000/users/Carol
 //   http://localhost:3000/users/invalidusername
+<<<<<<< HEAD
 app.get('/api/users/find/:userid', (req, res) => {
   const nameToLookup = req.params.userid; // matches ':userid' above
   
@@ -188,6 +237,19 @@ app.get('/api/users/find/:userid', (req, res) => {
       res.send({error: "user not found"});
     }
   });
+=======
+app.get('/users/:userid', (req, res) => {
+    const nameToLookup = req.params.userid; // matches ':userid' above
+
+    User.findOne({username: nameToLookup}, (err, match) => {
+        if (match) {
+            res.send(match);
+        }
+        else {
+            res.send({error: "user not found"});
+        }
+    });
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 });
 
 /*
@@ -197,6 +259,7 @@ AJAX MAGIC
 */
 
 app.get('/api/user', (req, res) => {
+<<<<<<< HEAD
   if (req.user)
   {
     res.json(req.user);
@@ -226,7 +289,40 @@ Using a data visualization library or API on the frontend
 app.get('/api/text', (req, res) => {
   res.send(text);
 });
+=======
+    if (req.user) {
+        res.json(req.user);
+    }
+    else {
+        res.json(undefined);
+    }
+});
 
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
+
+app.get('/api/text', (req, sres) => {
+    let text = '';
+    https.get({
+        protocol: "https:",
+        host: "api.esv.org",
+        path: "/v3/passage/html/?q=Luke%209%2023-25" + bibleOptions,
+        rejectUnauthorized: false,
+        headers: {"Authorization": "Token " + bibleToken}
+    }, function (res) {
+        let body = '';
+        res.on('data', function (chunk) {
+            body += chunk;
+        });
+
+        res.on('end', function () {
+            text = JSON.parse(body);
+            sres.send(text);
+        });
+    }).on('error', function (e) {
+        console.log("Error:", e);
+    });
+})
+;
 
 
 /*
@@ -245,6 +341,7 @@ function getContext(req, res) {
 }
 
 // index page (/)
+<<<<<<< HEAD
 app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
   // render with ejs
   res.render('layout', {
@@ -253,33 +350,44 @@ app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
     // set page to render in layout
     page: 'pages/index.ejs'
   });
+=======
+app.get(/^\/(index)?$/, (req, res) => {
+    // render with ejs
+    res.render('layout', {
+        // set title
+        title: 'Home',
+        // set page to render in layout
+        page: 'pages/index.ejs'
+    });
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 });
 
 // plans page (plans page)
 app.get('/plans', (req, res) => {
-  // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Plans',
-    // set page to render in layout
-    page: 'pages/plans.ejs'
-  });
+    // render with ejs
+    res.render('layout', {
+        // set title
+        title: 'Plans',
+        // set page to render in layout
+        page: 'pages/plans.ejs'
+    });
 });
 
 // login page
 app.get('/login', (req, res) => {
-  // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Login',
-    hideNav: true,
-    // set page to render in layout
-    page: 'pages/login.ejs'
-  });
+    // render with ejs
+    res.render('layout', {
+        // set title
+        title: 'Login',
+        hideNav: true,
+        // set page to render in layout
+        page: 'pages/login.ejs'
+    });
 });
 
 // profile page
 app.get('/profile', (req, res) => {
+<<<<<<< HEAD
   // render with ejs
   res.render('layout', {
     // set title
@@ -289,32 +397,42 @@ app.get('/profile', (req, res) => {
     // context
     context: getContext(req, res)
   });
+=======
+    // render with ejs
+    res.render('layout', {
+        // set title
+        title: 'Profile',
+        // set page to render in layout
+        page: 'pages/profile.ejs'
+    });
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 });
 
 // social page
 app.get('/social', (req, res) => {
-  // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Social',
-    // set page to render in layout
-    page: 'pages/social.ejs'
-  });
+    // render with ejs
+    res.render('layout', {
+        // set title
+        title: 'Social',
+        // set page to render in layout
+        page: 'pages/social.ejs'
+    });
 });
 
 // read page
 app.get('/read', (req, res) => {
-  // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Read',
-    // set page to render in layout
-    page: 'pages/read.ejs'
-  });
+    // render with ejs
+    res.render('layout', {
+        // set title
+        title: 'Read',
+        // set page to render in layout
+        page: 'pages/read.ejs'
+    });
 });
 
 
 // initialize db and start app 
+<<<<<<< HEAD
 db.once('open', function(){
   // connected to db
   console.log("database initialized")
@@ -338,4 +456,23 @@ db.once('open', function(){
   app.listen(3000, () => {
       console.log('Server started at http://localhost:3000/');
   });
+=======
+db.once('open', function () {
+    // connected to db
+    console.log("database initialized")
+
+    var userSchema = mongoose.Schema({
+        username: String,
+        password: String,
+        data: Object
+    });
+
+    /* initialize collections */
+    User = mongoose.model('User', userSchema);
+
+    // start the server at URL: http://localhost:3000/
+    app.listen(3000, () => {
+        console.log('Server started at http://localhost:3000/');
+    });
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 });

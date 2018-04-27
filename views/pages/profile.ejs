@@ -1,22 +1,44 @@
+<<<<<<< HEAD
 <div class="container centered" id="profile-page">
     <div id="profile-pic" class="circle-stat-circle">&nbsp</div>
     <h4 id="user-name"><%= context.user.username %></h4>
+=======
+<div class="container centered" id="profile-header">
+    <div id="profile-pic" class="page-rate-stat">&nbsp</div>
+    <h4>User's Name</h4>
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
     <p>10th place</p>
+</div>
+<div class="container centered" id="profile-body">
+    <!--<div class="profile-small-stats">-->
+        <!--<div class="small-stat">-->
+            <!--<div class="small-box"></div>-->
+            <!--100 points-->
+        <!--</div>-->
+        <!--<div class="small-stat">-->
+            <!--<div class="small-box"></div>-->
+            <!--54 hours-->
+        <!--</div>-->
+        <!--<div class="small-stat">-->
+            <!--<div class="small-box"></div>-->
+            <!--46 pages-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="profile-small-stats">
-        <div class="small-stat">
-            <div class="small-box"></div>
-            100 points
+    <div class="big-profile-stat-container">
+        <div class="page-rate-stat" id="page-rate">
+            <div class="stat-title">30</div>
+            pages/hr
         </div>
-        <div class="small-stat">
-            <div class="small-box"></div>
-            54 hours
-        </div>
-        <div class="small-stat">
-            <div class="small-box"></div>
-            46 pages
+        <div id="percent-read-container">
+            <div id="percent-read-chart"></div>
+            <div id="percent-read-title">
+                <div class="stat-title" id="percent-read-nums"></div>
+                pages read
+            </div>
         </div>
     </div>
+<<<<<<< HEAD
 
     <div class="circle-stat-circle" id="page-rate">
         <div class="stat-title">30</div>
@@ -33,6 +55,11 @@
         hours vs days chart.
     </div>
     <a href="/logout" class="logout-button">Logout</a>
+=======
+    <div id="profile-chart-title">Hours Read / Day</div>
+    <div class="profile-chart"></div>
+    <a href="/login" class="logout-button">Logout</a>
+>>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
 </div>
 
 <script src="scripts/profile.js"></script>
