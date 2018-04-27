@@ -28,4 +28,14 @@ $(document).ready(function () {
         readData[0].data + "/" + (readData[0].data + readData[1].data)
     )
 
+    // user data
+    loadUser();
+
 });
+
+function loadUser()
+{
+    $.get('/api/user', (user) => {
+
+    });
+}

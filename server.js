@@ -20,6 +20,7 @@ const db = mongoose.connection;
 // mongoose collections
 // (initialized later)
 let User;
+let Auth;
 
 /* 
 
@@ -37,13 +38,17 @@ passport.use(new LocalStrategy(
       // TODO: auth username and password against our DB
       console.log("authenticating with passport");
 
-      User.findOne({username: username}, (err, user) => {
-        if (user.password == password)
+      Auth.findOne({username: username}, (err, user) => {
+        if (user && user.password == password)
         {
-          return done(null, user)
+          console.log("found user");
+          User.findById(user.userId, (err, res) => {
+            return done(null, res)
+          });
         }
         else
         {
+          console.log("failed auth");
           return done("error authenticating");
         }
       });
@@ -65,6 +70,22 @@ passport.deserializeUser(function(id, cb) {
   });
 });
 
+const checkLoginMiddleware = function (req, res, next) {
+  if (req.user)
+  {
+    console.log("user exists");
+    next();
+  }
+  else
+  {
+    if (req.path == "/login") next();
+    else
+    {
+      console.log("need to login");
+      res.redirect('/login');
+    }
+  }
+}
 
 /*
 
@@ -81,6 +102,7 @@ app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+//app.use(checkLoginMiddleware);
 
 
 // directory for public webpages, i.e. front-end
@@ -91,27 +113,56 @@ app.post('/login', passport.authenticate('local'), function(req, res) {
   res.redirect('/');
 });
 
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
 app.post('/register', (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
 
-  let user = new User(
-    {username: username, 
+  console.log("registering");
+  let auth = new Auth(
+    {username: username,
       password: password});
 
-  User.findOne({username: username}, (err, match) => {
+  // find match from auth db
+  Auth.findOne({username: username}, (err, match) => {
     if (match || err)
     {
-      console.log("cannot register user");      
+      if (match)
+      {
+        console.log("user already exists");
+      }
+      else
+      {
+        console.log("other user");
+      }
       // TODO send error somehow
+      console.log("error registering");
       res.redirect('/login');
     }
     else
     {
-      user.save((err, user) => {
-        if (err) console.log("problem adding user");
+      let user = new User({
+        username: username,
+        data: {}
       });
-      res.redirect('/');
+      user.save((err, user) => {
+        if (err) {
+          console.log("error adding user");
+          res.redirect('/login');
+        }
+        auth.userId = user._id;
+        auth.save((err, auth) => {
+          if (err) {
+            console.log("err saving auth");
+            res.redirect('/login');
+          }
+          res.redirect('/login');
+        });
+      });
     }
   });
 
@@ -124,7 +175,7 @@ app.post('/register', (req, res) => {
 //   http://localhost:3000/users/Philip
 //   http://localhost:3000/users/Carol
 //   http://localhost:3000/users/invalidusername
-app.get('/users/:userid', (req, res) => {
+app.get('/api/users/find/:userid', (req, res) => {
   const nameToLookup = req.params.userid; // matches ':userid' above
   
   User.findOne({username: nameToLookup}, (err, match) => {
@@ -152,8 +203,14 @@ app.get('/api/user', (req, res) => {
   }
   else
   {
-    res.json(undefined);
+    res.json({error: "current user not found"});
   }
+});
+
+app.get('/api/users/all', (req, res) => {
+  User.find({}, (err, docs) => {
+    res.json(docs);
+  });
 });
 
 const text = `The purpose of the quarter-long project is to give you hands-on experience with building a full-stack web application with the following basic components:
@@ -181,8 +238,14 @@ copy the format of the root request ('/') for all the other pages
 
 */
 
+function getContext(req, res) {
+  return {
+    user: req.user
+  }
+}
+
 // index page (/)
-app.get(/^\/(index)?$/, (req, res) => {
+app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
   // render with ejs
   res.render('layout', {
     // set title
@@ -222,7 +285,9 @@ app.get('/profile', (req, res) => {
     // set title
     title: 'Profile',
     // set page to render in layout
-    page: 'pages/profile.ejs'
+    page: 'pages/profile.ejs',
+    // context
+    context: getContext(req, res)
   });
 });
 
@@ -256,12 +321,18 @@ db.once('open', function(){
 
   var userSchema = mongoose.Schema({
     username: String,
-    password: String,
     data: Object 
   });
 
+  var authSchema = mongoose.Schema({
+    username: String,
+    password: String,
+    userId: String
+  })
+
   /* initialize collections */
   User = mongoose.model('User', userSchema);
+  Auth = mongoose.model('Auth', authSchema);
 
   // start the server at URL: http://localhost:3000/
   app.listen(3000, () => {

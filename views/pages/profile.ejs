@@ -1,6 +1,6 @@
 <div class="container centered" id="profile-page">
     <div id="profile-pic" class="circle-stat-circle">&nbsp</div>
-    <h4>User's Name</h4>
+    <h4 id="user-name"><%= context.user.username %></h4>
     <p>10th place</p>
 
     <div class="profile-small-stats">
@@ -32,7 +32,7 @@
     <div class="profile-chart">
         hours vs days chart.
     </div>
-    <a href="/login" class="logout-button">Logout</a>
+    <a href="/logout" class="logout-button">Logout</a>
 </div>
 
 <script src="scripts/profile.js"></script>
