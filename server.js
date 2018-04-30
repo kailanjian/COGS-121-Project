@@ -219,6 +219,88 @@ app.get('/api/users/all', (req, res) => {
   });
 });
 
+app.post('/api/friends/add', (req, res) => {
+  let friendUsername = req.body.username;
+  if (!req.user) 
+  {
+    res.json({error: 'must be logged in'});
+  } 
+  else
+  {
+    User.findOneAndUpdate(
+      {username: friendUsername}, 
+      // add current user to friends friend inbox
+      {$push: {friendsin: req.user.username}},
+      {new: true, safe: true, upsert: true},
+      (err, friend) => {
+      if (err || !friend) 
+      {
+        res.json({error: 'could not find username'})
+      }
+      else
+      {
+        User.findByIdAndUpdate(  
+            // the id of the item to find
+            req.user._id,
+            // changes to make
+            //add friend to users friend list
+            {$push: {friends: friendUsername}},
+            // ask for updated document
+            {new: true, safe: true, upsert: true},
+            // the callback function
+            (err, user) => {
+                // Handle any possible database errors
+                if (err) return res.json({error: 'failed to update json', info: err});
+                else
+                {
+                  res.json({})
+                }
+            });
+      }
+    });
+
+  }
+});
+
+// endpoint for friends waiting for users response
+app.get('/api/friends/get/pending', (req, res) => {
+  let friendsin = req.user.friendsin;
+  let filteredFriends = [];
+  for (let i = 0; i < friendsin.length; i++)
+  {
+    if (req.user.friends.indexOf(friendsin[i]) == -1)
+    {
+      filteredFriends.push({username: friendsin[i]});
+    }
+  }
+  res.json(filteredFriends);
+});
+
+// endpoint for friends user is waiting for to respond
+app.get('/api/friends/get/requested', (req, res) => {
+  let friends = req.user.friends;
+  let filteredFriends = [];
+  for (let i = 0; i < friends.length; i++)
+  {
+    if (req.user.friendsin.indexOf(friends[i]) == -1)
+    {
+      filteredFriends.push({username: friends[i]});
+    }
+  }
+  res.json(filteredFriends);
+});
+// endpoint for friends which have responded and confirmed
+app.get('/api/friends/get/confirmed', (req, res) => {
+  let friends = req.user.friends;
+  let filteredFriends = [];
+  for (let i = 0; i < friends.length; i++) {
+    if (req.user.friendsin.indexOf(friends[i] != -1))
+    {
+      filteredFriends.push({username: friends[i]});
+    }
+  }
+  res.json(filteredFriends);
+});
 const text = `The purpose of the quarter-long project is to give you hands-on experience with building a full-stack web application with the following basic components:
 
 A server backend
@@ -327,7 +409,8 @@ app.get('/social', (req, res) => {
         // set title
         title: 'Social',
         // set page to render in layout
-        page: 'pages/social.ejs'
+        page: 'pages/social.ejs',
+        context: getContext(req, res)
     });
 });
 
@@ -350,6 +433,8 @@ db.once('open', function(){
 
   var userSchema = mongoose.Schema({
     username: String,
+    friends: [String],
+    friendsin: [String],
     data: Object 
   });
 

@@ -46,19 +46,5 @@ $(document).ready(function () {
         readPercentageData[0].data + "/" + (readPercentageData[0].data + readPercentageData[1].data)
     );
 
-<<<<<<< HEAD
-    // user data
-    loadUser();
-
-});
-
-function loadUser()
-{
-    $.get('/api/user', (user) => {
-
-    });
-}
-=======
     $.plot(".profile-chart", [hoursReadData, hoursReadAverages]);
 });
->>>>>>> 54f3b9e05ed49b043830a77134611cfd7e479ee2
