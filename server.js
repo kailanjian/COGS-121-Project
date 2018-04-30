@@ -4,7 +4,6 @@ IMPORT EVERYTHING
 
 */
 const express = require('express'); // used for express.js
-const https = require('https');
 const path = require('path'); // allows filesystem access, and directory helper methods
 const ejs = require('ejs'); // Effective JS layouts, our template rendering engine
 const partials = require('express-partials'); // used with ejs to render partial layout
@@ -12,16 +11,15 @@ const partials = require('express-partials'); // used with ejs to render partial
 var MongoClient = require('mongodb').MongoClient; // mongo driver
 const mongoose = require('mongoose');
 
+// get num of chapters in each book of the bible
+const bibleApi = require('./bibleApi');
+
 // this URL allows you to connect to the db, to the admin user. Use in your local session
 // if you want to manipulate the DB
 const dburl = "mongodb://admin:password@ds253879.mlab.com:53879/keimena";
 mongoose.connect(dburl);
 const db = mongoose.connection;
 
-// the tongue is like a flame
-const bibleurl = "http://api.esv.org/v3/passage/text/?q=";
-const bibleOptions = "&include-crossrefs=false&attach-audio-link-to=heading&include-short-copyright=false&include-copyright=false";
-const bibleToken = "e47bdf3fcb120666e61cd06ca194b8ac3f733aa7";
 
 // mongoose collections
 // (initialized later)
@@ -195,7 +193,6 @@ app.get('/api/users/find/:userid', (req, res) => {
     }
   });
 });
-
 /*
 
 AJAX MAGIC
@@ -315,29 +312,13 @@ app.get('/api/text', (req, res) => {
   res.send(text);
 });
 
-app.get('/api/text', (req, sres) => {
-    let text = '';
-    https.get({
-        protocol: "https:",
-        host: "api.esv.org",
-        path: "/v3/passage/html/?q=Luke%209%2023-25" + bibleOptions,
-        rejectUnauthorized: false,
-        headers: {"Authorization": "Token " + bibleToken}
-    }, function (res) {
-        let body = '';
-        res.on('data', function (chunk) {
-            body += chunk;
-        });
+app.get('/api/text', (req, res) => {
+    bibleApi.getChapter('John', '1', req, res);
+});
 
-        res.on('end', function () {
-            text = JSON.parse(body);
-            sres.send(text);
-        });
-    }).on('error', function (e) {
-        console.log("Error:", e);
-    });
-})
-;
+app.get('/api/text/next', (req, res) => {
+    bibleApi.getNextChapter('Haggai', '2', req, res);
+});
 
 
 /*
