@@ -3,6 +3,9 @@
 IMPORT EVERYTHING
 
 */
+
+const DEBUG = true;
+
 const express = require('express'); // used for express.js
 const path = require('path'); // allows filesystem access, and directory helper methods
 const ejs = require('ejs'); // Effective JS layouts, our template rendering engine
@@ -85,8 +88,20 @@ const checkLoginMiddleware = function (req, res, next) {
     if (req.path == "/login") next();
     else
     {
+      if (DEBUG) {
+        User.findOne({}, (err, user) => {
+          console.log("found user");
+          console.log(JSON.stringify(user));
+          req.login(user, function(err){
+            if(err) return next(err);
+          });
+          next();
+        });
+      } else
+      {
       console.log("need to login");
       res.redirect('/login');
+      }
     }
   }
 }
@@ -385,7 +400,7 @@ app.get('/profile', (req, res) => {
 });
 
 // social page
-app.get('/social', (req, res) => {
+app.get('/social', checkLoginMiddleware, (req, res) => {
     // render with ejs
     res.render('layout', {
         // set title
