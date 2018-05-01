@@ -39,7 +39,6 @@ const passport = require('passport'),
 
 // auth strategy for our setup
 passport.use(new LocalStrategy(
-
 //   good for debugging
 //   function (username, password, done) {
 //     // TODO: auth username and password against our DB
@@ -54,25 +53,23 @@ passport.use(new LocalStrategy(
 //       }
 //     });
 
-  function(username, password, done) {
-      // TODO: auth username and password against our DB
-      console.log("authenticating with passport");
+  function (username, password, done) {
+    // TODO: auth username and password against our DB
+    console.log("authenticating with passport");
 
-      Auth.findOne({username: username}, (err, user) => {
-        if (user && user.password == password)
-        {
-          console.log("found user");
-          User.findById(user.userId, (err, res) => {
-            return done(null, res)
-          });
-        }
-        else
-        {
-          console.log("failed auth");
-          return done("error authenticating");
-        }
-      });
-      // TODO: return correct user object when user is done or return err
+    Auth.findOne({username: username}, (err, user) => {
+      if (user && user.password == password) {
+        console.log("found user");
+        User.findById(user.userId, (err, res) => {
+          return done(null, res)
+        });
+      }
+      else {
+        console.log("failed auth");
+        return done("error authenticating");
+      }
+    });
+    // TODO: return correct user object when user is done or return err
 
   }
 ));
@@ -92,16 +89,13 @@ passport.deserializeUser(function (id, cb) {
 });
 
 const checkLoginMiddleware = function (req, res, next) {
-  if (req.user)
-  {
+  if (req.user) {
     console.log("user exists");
     next();
   }
-  else
-  {
+  else {
     if (req.path == "/login") next();
-    else
-    {
+    else {
       console.log("need to login");
       res.redirect('/login');
     }
@@ -134,7 +128,7 @@ app.post('/login', passport.authenticate('local'), function (req, res) {
   res.redirect('/');
 });
 
-app.get('/logout', function(req, res){
+app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
 });
@@ -145,27 +139,25 @@ app.post('/register', (req, res) => {
 
   console.log("registering");
   let auth = new Auth(
-    {username: username,
-      password: password});
+    {
+      username: username,
+      password: password
+    });
 
   // find match from auth db
   Auth.findOne({username: username}, (err, match) => {
-    if (match || err)
-    {
-      if (match)
-      {
+    if (match || err) {
+      if (match) {
         console.log("user already exists");
       }
-      else
-      {
+      else {
         console.log("other user");
       }
       // TODO send error somehow
       console.log("error registering");
       res.redirect('/login');
     }
-    else
-    {
+    else {
       let user = new User({
         username: username,
         data: {},
@@ -189,20 +181,6 @@ app.post('/register', (req, res) => {
     }
   });
 
-  User.findOne({username: username}, (err, match) => {
-    if (match || err) {
-      console.log("cannot register user");
-      // TODO send error somehow
-      res.redirect('/login');
-    }
-    else {
-      user.save((err, user) => {
-        if (err) console.log("problem adding user");
-      });
-      res.redirect('/');
-    }
-  });
-
 });
 
 
@@ -214,14 +192,12 @@ app.post('/register', (req, res) => {
 //   http://localhost:3000/users/invalidusername
 app.get('/api/users/find/:userid', (req, res) => {
   const nameToLookup = req.params.userid; // matches ':userid' above
-  
+
   User.findOne({username: nameToLookup}, (err, match) => {
-    if (match) 
-    {
+    if (match) {
       res.send(match);
     }
-    else
-    {
+    else {
       res.send({error: "user not found"});
     }
   });
@@ -231,13 +207,10 @@ app.get('/api/users/find/:userid', (req, res) => {
 AJAX MAGIC
 
 */
-
-  if (req.user)
-  {
+app.get('/api/user', (req, res) => {
+  if (req.user) {
     res.json(req.user);
-  }
-  else
-  {
+  } else {
     res.json({error: "current user not found"});
   }
 });
@@ -250,25 +223,21 @@ app.get('/api/users/all', (req, res) => {
 
 app.post('/api/friends/add', (req, res) => {
   let friendUsername = req.body.username;
-  if (!req.user) 
-  {
+  if (!req.user) {
     res.json({error: 'must be logged in'});
-  } 
-  else
-  {
+  }
+  else {
     User.findOneAndUpdate(
-      {username: friendUsername}, 
+      {username: friendUsername},
       // add current user to friends friend inbox
       {$push: {friendsin: req.user.username}},
       {new: true, safe: true, upsert: true},
       (err, friend) => {
-      if (err || !friend) 
-      {
-        res.json({error: 'could not find username'})
-      }
-      else
-      {
-        User.findByIdAndUpdate(  
+        if (err || !friend) {
+          res.json({error: 'could not find username'})
+        }
+        else {
+          User.findByIdAndUpdate(
             // the id of the item to find
             req.user._id,
             // changes to make
@@ -278,15 +247,14 @@ app.post('/api/friends/add', (req, res) => {
             {new: true, safe: true, upsert: true},
             // the callback function
             (err, user) => {
-                // Handle any possible database errors
-                if (err) return res.json({error: 'failed to update json', info: err});
-                else
-                {
-                  res.json({})
-                }
+              // Handle any possible database errors
+              if (err) return res.json({error: 'failed to update json', info: err});
+              else {
+                res.json({})
+              }
             });
-      }
-    });
+        }
+      });
 
   }
 });
@@ -295,10 +263,8 @@ app.post('/api/friends/add', (req, res) => {
 app.get('/api/friends/get/pending', (req, res) => {
   let friendsin = req.user.friendsin;
   let filteredFriends = [];
-  for (let i = 0; i < friendsin.length; i++)
-  {
-    if (req.user.friends.indexOf(friendsin[i]) == -1)
-    {
+  for (let i = 0; i < friendsin.length; i++) {
+    if (req.user.friends.indexOf(friendsin[i]) == -1) {
       filteredFriends.push({username: friendsin[i]});
     }
   }
@@ -309,10 +275,8 @@ app.get('/api/friends/get/pending', (req, res) => {
 app.get('/api/friends/get/requested', (req, res) => {
   let friends = req.user.friends;
   let filteredFriends = [];
-  for (let i = 0; i < friends.length; i++)
-  {
-    if (req.user.friendsin.indexOf(friends[i]) == -1)
-    {
+  for (let i = 0; i < friends.length; i++) {
+    if (req.user.friendsin.indexOf(friends[i]) == -1) {
       filteredFriends.push({username: friends[i]});
     }
   }
@@ -323,16 +287,11 @@ app.get('/api/friends/get/confirmed', (req, res) => {
   let friends = req.user.friends;
   let filteredFriends = [];
   for (let i = 0; i < friends.length; i++) {
-    if (req.user.friendsin.indexOf(friends[i] != -1))
-    {
+    if (req.user.friendsin.indexOf(friends[i] != -1)) {
       filteredFriends.push({username: friends[i]});
     }
   }
   res.json(filteredFriends);
-});
-
-app.get('/api/text', (req, res) => {
-  res.send(text);
 });
 
 app.get('/api/text', (req, res) => {
@@ -419,14 +378,14 @@ app.get('/profile', (req, res) => {
 
 // social page
 app.get('/social', (req, res) => {
-    // render with ejs
-    res.render('layout', {
-        // set title
-        title: 'Social',
-        // set page to render in layout
-        page: 'pages/social.ejs',
-        context: getContext(req, res)
-    });
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'Social',
+    // set page to render in layout
+    page: 'pages/social.ejs',
+    context: getContext(req, res)
+  });
 });
 
 // read page
@@ -442,22 +401,24 @@ app.get('/read', (req, res) => {
 
 
 // initialize db and start app 
-db.once('open', function(){
+db.once('open', function () {
   // connected to db
   console.log("database initialized")
 
   var userSchema = mongoose.Schema({
     username: String,
+    currBook: String,
+    currChapNum: Number,
     friends: [String],
     friendsin: [String],
-    data: Object 
+    data: Object
   });
 
   var authSchema = mongoose.Schema({
     username: String,
     password: String,
     userId: String
-  })
+  });
 
   /* initialize collections */
   User = mongoose.model('User', userSchema);
@@ -465,6 +426,6 @@ db.once('open', function(){
 
   // start the server at URL: http://localhost:3000/
   app.listen(3000, () => {
-      console.log('Server started at http://localhost:3000/');
+    console.log('Server started at http://localhost:3000/');
   });
 });
