@@ -2,7 +2,13 @@
   margin: 0;
 }
 
+#back:hover {
+  color: lightgrey;
+  cursor: pointer;
+}
+
 .planName {
+  pointer-events: none;
   font-size: 1.5rem;
   font-weight: normal;
 }
@@ -136,15 +142,19 @@ header h1 {
 }
 
 .back-forward-button {
+  pointer-events: none;
   margin-left: 20px;
   margin-right: 20px;
   margin-top: .5rem;
   font-size: 22pt;
-  color: black;
-  display: block;
 }
+
 
 .text {
   margin-bottom: 4rem;
   padding-top: 4rem;
+}
+
+#nextButton {
+  width: 50%;
 }
