@@ -3,8 +3,6 @@
 IMPORT EVERYTHING
 
 */
-let currentBook = "Genesis";
-let currentChapter = 1;
 
 const express = require('express'); // used for express.js
 const path = require('path'); // allows filesystem access, and directory helper methods
@@ -101,7 +99,9 @@ app.post('/register', (req, res) => {
   let user = new User(
     {
       username: username,
-      password: password
+      password: password,
+      currBook: "Genesis",
+      currChapNum: 1
     });
 
   User.findOne({username: username}, (err, match) => {
@@ -156,15 +156,22 @@ app.get('/api/user', (req, res) => {
 
 
 app.get('/api/text', (req, res) => {
-  bibleApi.grabChapter(currentBook, currentChapter, req, res);
+  bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
 });
 
 app.get('/api/text/next', (req, res) => {
-  const chapterDesc = bibleApi.getNextChapter(currentBook, currentChapter);
-  currentBook = chapterDesc.book;
-  currentChapter = chapterDesc.chapter;
-
-  bibleApi.grabChapter(currentBook, currentChapter, req, res);
+  const chapterDesc = bibleApi.getNextChapter(req.user.currBook, req.user.currChapNum);
+  User.findById(req.user._id, (err, user) => {
+    console.log(user);
+  });
+  User.findByIdAndUpdate(req.user._id, {
+    $set: {
+      currBook: chapterDesc.book,
+      currChapNum: chapterDesc.chapter
+    }
+  }, () => {
+    bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
+  });
 });
 
 
@@ -248,11 +255,13 @@ app.get('/read', (req, res) => {
 // initialize db and start app 
 db.once('open', function () {
   // connected to db
-  console.log("database initialized")
+  console.log("database initialized");
 
   var userSchema = mongoose.Schema({
     username: String,
     password: String,
+    currBook: String,
+    currChapNum: Number,
     data: Object
   });
 
