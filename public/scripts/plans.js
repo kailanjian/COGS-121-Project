@@ -1,6 +1,6 @@
 let isText = false;
 
-$(document).ready(function() {
+$(document).ready(function () {
   $(".text").hide();
   $("#plan1").click(() => {
     console.log("click");

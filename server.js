@@ -3,6 +3,7 @@
 IMPORT EVERYTHING
 
 */
+
 const express = require('express'); // used for express.js
 const path = require('path'); // allows filesystem access, and directory helper methods
 const ejs = require('ejs'); // Effective JS layouts, our template rendering engine
@@ -34,10 +35,25 @@ SETUP PASSPORT
 
 // passport is the module which provides authentication
 const passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+  LocalStrategy = require('passport-local').Strategy;
 
 // auth strategy for our setup
 passport.use(new LocalStrategy(
+
+//   good for debugging
+//   function (username, password, done) {
+//     // TODO: auth username and password against our DB
+//     console.log("authenticating with passport");
+
+//     User.findOne({username: username}, (err, user) => {
+//       if (user.password == password) {
+//         return done(null, user)
+//       }
+//       else {
+//         return done("error authenticating");
+//       }
+//     });
+
   function(username, password, done) {
       // TODO: auth username and password against our DB
       console.log("authenticating with passport");
@@ -57,21 +73,22 @@ passport.use(new LocalStrategy(
         }
       });
       // TODO: return correct user object when user is done or return err
+
   }
 ));
 
 // serialize user object into something to save
 passport.serializeUser(function (user, cb) {
-    console.log("deserializing");
-    cb(null, user._id);
+  console.log("deserializing");
+  cb(null, user._id);
 });
 
 // deserialize serialized user object
 passport.deserializeUser(function (id, cb) {
-    console.log("deserializing");
-    User.findById(id, (err, user) => {
-        cb(null, user);
-    });
+  console.log("deserializing");
+  User.findById(id, (err, user) => {
+    cb(null, user);
+  });
 });
 
 const checkLoginMiddleware = function (req, res, next) {
@@ -113,8 +130,8 @@ app.use(passport.session());
 app.use(express.static('public'));
 
 app.post('/login', passport.authenticate('local'), function (req, res) {
-    console.log(req.user);
-    res.redirect('/');
+  console.log(req.user);
+  res.redirect('/');
 });
 
 app.get('/logout', function(req, res){
@@ -151,7 +168,9 @@ app.post('/register', (req, res) => {
     {
       let user = new User({
         username: username,
-        data: {}
+        data: {},
+        currBook: "Genesis",
+        currChapNum: 1
       });
       user.save((err, user) => {
         if (err) {
@@ -167,6 +186,20 @@ app.post('/register', (req, res) => {
           res.redirect('/login');
         });
       });
+    }
+  });
+
+  User.findOne({username: username}, (err, match) => {
+    if (match || err) {
+      console.log("cannot register user");
+      // TODO send error somehow
+      res.redirect('/login');
+    }
+    else {
+      user.save((err, user) => {
+        if (err) console.log("problem adding user");
+      });
+      res.redirect('/');
     }
   });
 
@@ -199,7 +232,6 @@ AJAX MAGIC
 
 */
 
-app.get('/api/user', (req, res) => {
   if (req.user)
   {
     res.json(req.user);
@@ -298,26 +330,28 @@ app.get('/api/friends/get/confirmed', (req, res) => {
   }
   res.json(filteredFriends);
 });
-const text = `The purpose of the quarter-long project is to give you hands-on experience with building a full-stack web application with the following basic components:
-
-A server backend
-A database
-Connecting to external APIs
-A frontend that loads data from backend without page refreshes (Ajax)
-Using a data visualization library or API on the frontend
-
-(We will not place as much emphasis on the concepts in the What will we not cover in this course? section at the bottom of the course description page.)`
 
 app.get('/api/text', (req, res) => {
   res.send(text);
 });
 
 app.get('/api/text', (req, res) => {
-    bibleApi.getChapter('John', '1', req, res);
+  bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
 });
 
 app.get('/api/text/next', (req, res) => {
-    bibleApi.getNextChapter('Haggai', '2', req, res);
+  const chapterDesc = bibleApi.getNextChapter(req.user.currBook, req.user.currChapNum);
+  User.findById(req.user._id, (err, user) => {
+    console.log(user);
+  });
+  User.findByIdAndUpdate(req.user._id, {
+    $set: {
+      currBook: chapterDesc.book,
+      currChapNum: chapterDesc.chapter
+    }
+  }, () => {
+    bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
+  });
 });
 
 
@@ -349,25 +383,25 @@ app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
 
 // plans page (plans page)
 app.get('/plans', (req, res) => {
-    // render with ejs
-    res.render('layout', {
-        // set title
-        title: 'Plans',
-        // set page to render in layout
-        page: 'pages/plans.ejs'
-    });
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'Plans',
+    // set page to render in layout
+    page: 'pages/plans.ejs'
+  });
 });
 
 // login page
 app.get('/login', (req, res) => {
-    // render with ejs
-    res.render('layout', {
-        // set title
-        title: 'Login',
-        hideNav: true,
-        // set page to render in layout
-        page: 'pages/login.ejs'
-    });
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'Login',
+    hideNav: true,
+    // set page to render in layout
+    page: 'pages/login.ejs'
+  });
 });
 
 // profile page
@@ -397,13 +431,13 @@ app.get('/social', (req, res) => {
 
 // read page
 app.get('/read', (req, res) => {
-    // render with ejs
-    res.render('layout', {
-        // set title
-        title: 'Read',
-        // set page to render in layout
-        page: 'pages/read.ejs'
-    });
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'Read',
+    // set page to render in layout
+    page: 'pages/read.ejs'
+  });
 });
 
 

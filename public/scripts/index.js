@@ -4,9 +4,20 @@ let isText = false;
 let isStats = false;
 
 
-$(document).ready(function() {
+$(document).ready(function () {
   $(".text").hide();
   $(".graph").hide();
+
+  $("#nextButton").click(() => {
+    console.log("clicked next");
+    $.get("/api/text/next", (data) => {
+      console.log("api get next");
+      console.log(data);
+      $('html,body').scrollTop(0);
+      $(".content").html(data.passages[0]);
+    });
+  });
+
   $("#resume_button").click(() => {
     console.log("click");
     $.get("/api/text", (data) => {
@@ -29,15 +40,18 @@ $(document).ready(function() {
 function toggleMode() {
   if (!isText) {
     $(".plans").hide();
+    $(".all_graphs").hide();
     $(".text").show();
   } else {
     $(".text").hide();
+    $(".all_graphs").show();
     $(".plans").show();
   }
-  isText = !isText; 
+  isText = !isText;
 }
-function toggleStats(){
-  if(isStats == true){
+
+function toggleStats() {
+  if (isStats == true) {
     $(".graph").hide()
   } else {
     $(".graph").show()
