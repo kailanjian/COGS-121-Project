@@ -1,6 +1,6 @@
-<div class="container centered" id="profile-header">
-    <div id="profile-pic" class="page-rate-stat">&nbsp</div>
-    <h4>User's Name</h4>
+<div class="container centered" id="profile-page">
+   <!-- <div id="profile-pic" class="circle-stat-circle">&nbsp</div>-->
+    <h4 id="user-name"><%= context.user.username %></h4>
     <p>10th place</p>
 </div>
 <div class="container centered" id="profile-body">
@@ -32,9 +32,23 @@
             </div>
         </div>
     </div>
+
+    <div class="big-profile-stat-container">
+        <div class="page-rate-stat" id="page-rate">
+            <div class="stat-title">30</div>
+            pages/hr
+        </div>
+        <div id="percent-read-container">
+            <div id="percent-read-chart"></div>
+            <div id="percent-read-title">
+                <div class="stat-title" id="percent-read-nums"></div>
+                pages read
+            </div>
+        </div>
+    </div>
     <div id="profile-chart-title">Hours Read / Day</div>
     <div class="profile-chart"></div>
-    <a href="/login" class="logout-button">Logout</a>
+    <a href="/logout" class="logout-button">Logout</a>
 </div>
 
 <script src="scripts/profile.js"></script>

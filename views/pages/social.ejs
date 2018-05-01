@@ -1,2 +1,40 @@
 <!-- data page (sample not sure if we need this) -->
 <p>social</p>
+<div class="friends-list">
+  <p>Add Friend</p> 
+  <input list="friends-data-list" id="friends-data-list-list" name="friends-input" />
+  <datalist id="friends-data-list">
+    <!--populated with ajax in js-->
+  </datalist>
+  <button id="friends-data-list-button">Add Friend</button>
+  <p>confirmed Friend Requests</p>
+  <ul id="confirmed-friends-list">
+  </ul>
+  <p>Pending Friend Requests</p>
+  <ul id="pending-friends-list">
+  </ul>
+  <p>Your Friend Requests</p>
+  <ul id="request-friends-list">
+  </ul>
+</div>
+
+<script src="scripts/social.js"></script>
+
+<script type="text/html" id="confirmed-friend-template">
+  <div class="friend-container">
+      <div data-content="username"></div>
+  </div>
+</script>
+
+<script type="text/html" id="pending-friend-template">
+  <div class="friend-container">
+      <div data-content="username"></div>
+      <button class="pending-friend-button" data-template-bind='[{"attribute": "data-friend-username", "value": "username"}]'>Add</button>
+  </div>
+</script>
+
+<script type="text/html" id="request-friend-template">
+  <div class="friend-container">
+      <div data-content="username"></div>
+  </div>
+</script>
