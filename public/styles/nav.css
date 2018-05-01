@@ -4,15 +4,21 @@
   left: 0;
   width: 100%;
   height: 50px;
-  font-size: 20pt;
-  background-color: gray;
+  border-top: grey 1px solid;
   display: flex;
+  text-align: justify;
   flex-direction: row;
   align-items: stretch;
   justify-content: center;
 }
 
+.nav-icon {
+  font-size: 19px
+}
+
 .nav-link, .nav-link:hover {
+  font-size: 13px;
+  display: inline-block;
+  width: 30%;
   color: black;
-  width: 20%;
 }

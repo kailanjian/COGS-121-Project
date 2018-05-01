@@ -294,15 +294,19 @@ app.get('/api/friends/get/confirmed', (req, res) => {
   res.json(filteredFriends);
 });
 
+app.get('/api/currChapter', (req, res) => {
+  res.send({
+    currBook: req.user.currBook,
+    currChapNum: req.user.currChapNum
+  });
+});
+
 app.get('/api/text', (req, res) => {
   bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
 });
 
 app.get('/api/text/next', (req, res) => {
   const chapterDesc = bibleApi.getNextChapter(req.user.currBook, req.user.currChapNum);
-  User.findById(req.user._id, (err, user) => {
-    console.log(user);
-  });
   User.findByIdAndUpdate(req.user._id, {
     $set: {
       currBook: chapterDesc.book,

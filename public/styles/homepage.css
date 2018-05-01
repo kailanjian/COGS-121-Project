@@ -1,111 +1,150 @@
 * {
-    margin: 0;
+  margin: 0;
+}
+
+.planName {
+  font-size: 1.5rem;
+  font-weight: normal;
+}
+
+.plans {
+  padding-top: 3.5rem;
+  background-color: #EEEEEE;
+  height: 10rem;
+}
+
+.plans:hover {
+  color: grey;
+  cursor: pointer;
+}
+
+.pre-chapter-title {
+  position: absolute;
+}
+
+.continue-text {
+  position: absolute;
+  top: 8rem;
+  left: 11.3rem;
+}
+
+.continue-icon {
+  font-size: .9rem;
+  position: absolute;
+  top: 8.4rem;
+  left: 15.6rem;
+}
+
+#chapter-title {
+  position: absolute;
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-top: .2rem;
+}
+
+.nav-up {
+  top: -50px;
 }
 
 header {
-    /* position: fixed; */
-    height: 48px;
-    width: 100%;
-    background-color: #cccccc;
+  /* position: fixed; */
+  height: 48px;
+  width: 100%;
+  border-bottom: 1px gray solid;
+  background-color: white;
 }
 
 header h1 {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: .5rem;
-    margin: auto;
-    text-align: center;
-    width: 100%;
-    display: inline-block;
-    font-size: 1rem;
+  /*position: absolute;*/
+  left: 0;
+  right: 0;
+  top: .5rem;
+  margin: auto;
+  text-align: center;
+  width: 100%;
+  display: inline-block;
+  font-size: 1rem;
 }
 
 .progress {
-    display: inline-block;
-    float: right;
-    height: 48px;
-    width: 60px;
-    background-color: #808080;
+  display: inline-block;
+  float: right;
+  height: 48px;
+  width: 60px;
+  background-color: white;
+  border-bottom: 1px grey solid;
+  border-radius: 0px;
 }
 
 .all_plans {
-    display: inline-block;
-    float: left;
-    height: 48px;
-    width: 60px;
-    background-color: #808080;
+  display: inline-block;
+  float: left;
+  height: 48px;
+  width: 60px;
 }
 
 .all_books {
-    position: absolute;
-    top: 64px;
-    width: 100%;
+  position: absolute;
+  top: 64px;
+  width: 100%;
 }
 
 .book {
-    position: relative;
-    margin-bottom: 16px;
-    height: 48px;
-    width: 85%;
-    margin-right: auto;
-    margin-left: auto;
-    border: 5px black;
-    background-color: #cccccc;
+  position: relative;
+  margin-bottom: 16px;
+  height: 48px;
+  width: 85%;
+  margin-right: auto;
+  margin-left: auto;
+  border: 5px black;
+  background-color: #cccccc;
 }
 
 .book h2 {
-    position: relative;
-    padding-left: 8px;
+  position: relative;
+  padding-left: 8px;
 }
 
 .chapters {
-    position: relative;
-    height: 80px;
-    background-color: #999999
+  position: relative;
+  height: 80px;
+  background-color: #999999
 }
 
 .chapters p {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    display: inline-block;
-}
-
-#resume_button {
-    position: absolute;
-    display: block;
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  display: inline-block;
 }
 
 #navbar {
-    list-style-type: none;
-    background-color: black;
-    position: fixed;
-    margin: 0;
-    padding: 0;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
+  list-style-type: none;
+  background-color: black;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
 }
 
 #navbar li {
-    display: inline-block;
-    padding: 16px 48px;
+  display: inline-block;
+  padding: 16px 48px;
 }
 
-.back-button {
-    margin-left: 20px;
-    margin-top: 2px;
-    font-size: 22pt;
-    color: black;
-    display: block;
+.back-forward-button {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: .5rem;
+  font-size: 22pt;
+  color: black;
+  display: block;
 }
 
 .text {
-    margin-bottom: 4rem;
-    padding-top: 4rem;
+  margin-bottom: 4rem;
+  padding-top: 4rem;
 }
