@@ -2,6 +2,7 @@
 // Note: ALL VARIABLES HERE WILL BE GLOBAL
 let isText = false;
 let isStats = false;
+let reading = false;
 
 function updateChapterTitle(callback) {
   $.get("/api/currChapter", (data) => {
@@ -15,6 +16,7 @@ function updateChapterTitle(callback) {
 $(document).ready(function () {
   $(".text").hide();
   $(".graph").hide();
+  $(".back-arrow").hide();
 
   updateChapterTitle();
 
@@ -64,14 +66,15 @@ function toggleMode() {
   isText = !isText;
 }
 
-function toggleStats() {
-  if (isStats == true) {
-    $(".graph").hide()
-  } else {
-    $(".graph").show()
-  }
-  isStats = !isStats;
-}
+//
+// function toggleStats() {
+//   if (isStats == true) {
+//     $(".graph").hide()
+//   } else {
+//     $(".graph").show()
+//   }
+//   isStats = !isStats;
+//}
 
 /*
 Head navbar animation
