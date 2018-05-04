@@ -39,7 +39,11 @@ $(document).ready(function () {
   });
 
   $("#back").click(() => {
-    updateChapterTitle(toggleMode());
+    if(isText) {
+      updateChapterTitle(toggleMode());
+    } else  {
+      window.location.replace("/plans");
+    }
   });
 
   $("#stats").click(() => {
@@ -102,7 +106,7 @@ function hasScrolled() {
     $('header').removeClass('nav-down').addClass('nav-up');
   } else {
     // Scroll Up
-    if (st + $(window).height() < $(document).height()) {
+    if (st + $(window).height() < $(document).height() + 200) {
       $('header').removeClass('nav-up').addClass('nav-down');
     }
   }

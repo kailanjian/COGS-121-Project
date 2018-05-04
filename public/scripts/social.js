@@ -1,12 +1,10 @@
 console.log("boiboiboibobiobi")
 
-$(document).ready(function() {
+$(document).ready(function () {
   $.get("/api/users/all", (data) => {
     console.log("got data" + data);
-    for (let i = 0; i < data.length; i++)
-    {
-      $("#friends-data-list").
-        append("<option value=" + data[i].username + ">" );
+    for (let i = 0; i < data.length; i++) {
+      $("#friends-data-list").append("<option value=" + data[i].username + ">");
     }
   });
 
@@ -38,8 +36,7 @@ $(document).ready(function() {
       if (data.error) {
         console.log(data.error);
       }
-      else
-      {
+      else {
         $("#request-friends-list").append(genPendingFriendsListItem(friend, 0));
       }
     });
