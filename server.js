@@ -28,6 +28,7 @@ const db = mongoose.connection;
 // (initialized later)
 let User;
 let Auth;
+let Plans;
 
 /* 
 
@@ -78,13 +79,11 @@ passport.use(new LocalStrategy(
 
 // serialize user object into something to save
 passport.serializeUser(function (user, cb) {
-  console.log("deserializing");
   cb(null, user._id);
 });
 
 // deserialize serialized user object
 passport.deserializeUser(function (id, cb) {
-  console.log("deserializing");
   User.findById(id, (err, user) => {
     cb(null, user);
   });
@@ -99,6 +98,7 @@ const checkLoginMiddleware = function (req, res, next) {
     if (req.path == "/login") next();
     else
     {
+      // DEBUG PATH: logs in automatically if you are not on a valid user account
       if (DEBUG) {
         User.findOne({}, (err, user) => {
           console.log("found user");
@@ -173,25 +173,35 @@ app.post('/register', (req, res) => {
       res.redirect('/login');
     }
     else {
-      let user = new User({
-        username: username,
-        data: {},
+      let plan = new Plan({
+        planName: "Bible in 365 Days",
+        firstBook: "Genesis",
+        lastBook: "Revelations",
         currBook: "Genesis",
         currChapNum: 1
-      });
-      user.save((err, user) => {
-        if (err) {
-          console.log("error adding user");
-          res.redirect('/login');
-        }
-        auth.userId = user._id;
-        auth.save((err, auth) => {
+      })
+      plan.save((err, plan) => {
+        let user = new User({
+          username: username,
+          data: {},
+          currBook: "Genesis",
+          currChapNum: 1,
+          plans: [plan._id]
+        });
+        user.save((err, user) => {
           if (err) {
-            console.log("err saving auth");
+            console.log("error adding user");
             res.redirect('/login');
           }
-          res.redirect('/login');
-          
+          auth.userId = user._id;
+          auth.save((err, auth) => {
+            if (err) {
+              console.log("err saving auth");
+              res.redirect('/login');
+            }
+            res.redirect('/login');
+            
+          });
         });
       });
     }
@@ -303,13 +313,14 @@ app.get('/api/friends/get/confirmed', (req, res) => {
   let friends = req.user.friends;
   let filteredFriends = [];
   for (let i = 0; i < friends.length; i++) {
-    if (req.user.friendsin.indexOf(friends[i] != -1)) {
+    if (req.user.friendsin.indexOf(friends[i]) != -1) {
       filteredFriends.push({username: friends[i]});
     }
   }
   res.json(filteredFriends);
 });
 
+// DEPRECATED
 app.get('/api/currChapter', (req, res) => {
   res.send({
     currBook: req.user.currBook,
@@ -317,19 +328,74 @@ app.get('/api/currChapter', (req, res) => {
   });
 });
 
+app.get('/api/plan/:planId/currChapter', (req, res) => {
+  let planId = req.params.planId;
+  Plan.findById(planId, (err, plan) => {
+    res.send({
+      currBook: plan.currBook,
+      currChapNum: plan.currChapNum
+    })
+  });
+});
+
+// DEPRECATED
 app.get('/api/text', (req, res) => {
   bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
+  User.findByIdAndUpdate(req.user._id, {
+    $push: {
+      log: {"type": "start", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum} 
+    }
+  })
+});
+
+app.get("/api/:planId/text", (req, res) => {
+  Plan.findById(req.params.planId, (err, plan) => {
+    User.findByIdAndUpdate(req.user._id, {
+      $push: {
+        log: {"type": "start", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum}
+      }
+    }, (err, user) => {
+      bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
+    });
+  });
 });
 
 app.get('/api/text/next', (req, res) => {
+  // TODO fix this
   const chapterDesc = bibleApi.getNextChapter(req.user.currBook, req.user.currChapNum);
   User.findByIdAndUpdate(req.user._id, {
     $set: {
       currBook: chapterDesc.book,
       currChapNum: chapterDesc.chapter
+    },
+    $push: {
+      log: {"type": "next", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum}
     }
   }, () => {
     bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
+  });
+});
+
+app.get('/api/:planId/text/next', (req, res) => {
+  let planId = req.params.planId;
+  Plan.findById(planId, (err, plan) => {
+    console.log("running getNextChapter");
+    const chapterDesc = bibleApi.getNextChapter(plan.currBook, plan.currChapNum);
+    Plan.findByIdAndUpdate(planId, {
+      $set: {
+        currBook: chapterDesc.book,
+        currChapNum: chapterDesc.chapter
+      }
+    }, () => {
+      console.log("updated plan");
+      User.findByIdAndUpdate(req.user._id, {
+        $push: {
+          log: {"type": "next", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum}
+        }}, (err, user) => {
+          console.log("running grab chapter");
+          bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
+        });
+    });
   });
 });
 
@@ -362,12 +428,14 @@ app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
 
 // plans page (plans page)
 app.get('/plans', (req, res) => {
+  // TODO get plan data before posting page
   // render with ejs
   res.render('layout', {
     // set title
     title: 'Plans',
     // set page to render in layout
-    page: 'pages/plans.ejs'
+    page: 'pages/plans.ejs',
+    context: getContext(req, res)
   });
 });
 
@@ -419,6 +487,23 @@ app.get('/read', (req, res) => {
   });
 });
 
+app.get('/plan/:planId', (req, res) => {
+  Plan.findById(req.params.planId, (err, plan) => {
+    let context = getContext(req, res);
+    context.planId = plan._id;
+    context.planName = plan.planName;
+    context.currBook = plan.currBook;
+    context.currChapNum = plan.currChapNum;
+
+    // render with ejs
+    res.render('layout', {
+      title: 'Plan',
+      page: 'pages/plan.ejs',
+      context: context
+    })
+  });
+});
+
 
 // initialize db and start app 
 db.once('open', function () {
@@ -426,12 +511,14 @@ db.once('open', function () {
   console.log("database initialized")
 
   var userSchema = mongoose.Schema({
-    username: String,
+    username: String, // username
     currBook: String,
     currChapNum: Number,
     friends: [String],
     friendsin: [String],
-    data: Object
+    log: [Object],
+    data: Object,
+    plans: [String] // items are {planId, currBook, currChapNum}
   });
 
   var authSchema = mongoose.Schema({
@@ -440,9 +527,22 @@ db.once('open', function () {
     userId: String
   });
 
+  var planSchema = mongoose.Schema({
+    // name of plan e.g. Bible in 365 days
+    planName: String,
+    // plan type is in case we decide to add more complex plans than book to book
+    planType: {type: String, enum: ['linear'], default: 'linear'}, 
+    // for regular plan type. Read from start of first book to start of last book
+    firstBook: String,
+    lastBook: String,
+    currBook: String,
+    currChapNum: String,
+  });
+
   /* initialize collections */
   User = mongoose.model('User', userSchema);
   Auth = mongoose.model('Auth', authSchema);
+  Plan = mongoose.model('Plan', planSchema);
 
   // start the server at URL: http://localhost:3000/
   app.listen(3000, () => {

@@ -21,10 +21,14 @@
   <script src="http://codepb.github.io/jquery-template/jquery.loadTemplate-0.4.3.js"></script>
 </head>
 <body>
-<%- include(page) %>
-
-<% if (!locals.hideNav) { %>
-<%- include ../partials/nav.ejs %>
-<% } %>
+  <%- include(page) %>
+  <div class="space">
+    <br />
+    <br />
+    <br />
+  </div>
+  <% if (!locals.hideNav) { %>
+  <%- include ../partials/nav.ejs %>
+  <% } %>
 </body>
 </html>

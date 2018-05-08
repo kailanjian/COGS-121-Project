@@ -1,40 +1,61 @@
 <!-- data page (sample not sure if we need this) -->
-<p>social</p>
-<div class="friends-list">
-  <p>Add Friend</p> 
-  <input list="friends-data-list" id="friends-data-list-list" name="friends-input" />
-  <datalist id="friends-data-list">
-    <!--populated with ajax in js-->
-  </datalist>
-  <button id="friends-data-list-button">Add Friend</button>
-  <p>confirmed Friend Requests</p>
-  <ul id="confirmed-friends-list">
-  </ul>
-  <p>Pending Friend Requests</p>
-  <ul id="pending-friends-list">
-  </ul>
-  <p>Your Friend Requests</p>
-  <ul id="request-friends-list">
-  </ul>
+<div class="container-fluid">
+  <p class="h1">social</p>
+  <div class="friends-list">
+    <p class="h2">Add Friend</p> 
+    <input type="text" class="form-control" list="friends-data-list" id="friends-data-list-list" name="friends-input" />
+    <datalist id="friends-data-list">
+      <!--populated with ajax in js-->
+    </datalist>
+    <br />
+    <button id="friends-data-list-button" class="form-control btn btn-primary">Add Friend</button>
+    <p>confirmed Friend Requests</p>
+    <ul class="list-group" id="confirmed-friends-list">
+    </ul>
+    <p>Pending Friend Requests</p>
+    <ul class="list-group" id="pending-friends-list">
+    </ul>
+    <p>Your Friend Requests</p>
+    <ul class="list-group" id="request-friends-list">
+    </ul>
+  </div>
 </div>
 
 <script src="scripts/social.js"></script>
 
 <script type="text/html" id="confirmed-friend-template">
-  <div class="friend-container">
-      <div data-content="username"></div>
-  </div>
+  <li class="list-group-item">
+    <div class="friend-container">
+      <div class="friend-name">
+        <div data-content="username"></div>
+      </div>
+      <div class="friend-sub">
+        <span data-content="hrs"></span>
+        <span data-content="chapters"></span>
+      </div>
+    </div>
+  </li>
 </script>
 
 <script type="text/html" id="pending-friend-template">
-  <div class="friend-container">
-      <div data-content="username"></div>
-      <button class="pending-friend-button" data-template-bind='[{"attribute": "data-friend-username", "value": "username"}]'>Add</button>
-  </div>
+  <li class="list-group-item" data-template-bind='[{"attribute": "data-pending-friend", "value": "username"}]'>
+    <div class="friend-container">
+      <div class="friend-name">
+        <div data-content="username"></div>
+      </div>
+      <div class="friend-sub">
+        <button 
+          class="pending-friend-button form-control btn btn-primary" 
+          data-template-bind='[{"attribute": "data-friend-username", "value": "username"}]'>Add</button>
+      </div>
+    </div>
+  </li>
 </script>
 
 <script type="text/html" id="request-friend-template">
-  <div class="friend-container">
-      <div data-content="username"></div>
-  </div>
+  <li class="list-group-item">
+    <div class="friend-container">
+        <div data-content="username"></div>
+    </div>
+  </li>
 </script>
