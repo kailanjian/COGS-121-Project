@@ -76,7 +76,7 @@ const bibleChapters = {
 // the tongue is like a flame
 const apiHost = 'api.esv.org';
 const biblePrePath = "/v3/passage/html/?q=";
-const bibleOptions = "&include-crossrefs=false&include-short-copyright=false&include-copyright=false&include-footnotes=false&include-audio-link=false";
+const bibleOptions = "&include-crossrefs=false&include-short-copyright=false&include-copyright=false&include-footnotes=false&include-audio-link=false&include-chapter-numbers=false";
 const bibleToken = "Token e47bdf3fcb120666e61cd06ca194b8ac3f733aa7";
 
 let bibleBooks = []; // initialize cause i'm too lazy to type them out
