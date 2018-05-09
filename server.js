@@ -330,6 +330,7 @@ app.get('/api/currChapter', (req, res) => {
 
 app.get('/api/plan/:planId/currChapter', (req, res) => {
   let planId = req.params.planId;
+  console.log("curr chapter")
   Plan.findById(planId, (err, plan) => {
     res.send({
       currBook: plan.currBook,
@@ -340,6 +341,7 @@ app.get('/api/plan/:planId/currChapter', (req, res) => {
 
 // DEPRECATED
 app.get('/api/text', (req, res) => {
+  console.log("boibobiobib");
   bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
   User.findByIdAndUpdate(req.user._id, {
     $push: {
@@ -350,12 +352,14 @@ app.get('/api/text', (req, res) => {
 
 app.get("/api/:planId/text", (req, res) => {
   Plan.findById(req.params.planId, (err, plan) => {
+    console.log("CALLED API");
+    console.log(JSON.stringify(plan));
     User.findByIdAndUpdate(req.user._id, {
       $push: {
-        log: {"type": "start", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum}
+        log: {"type": "start", "currBook": plan.currBook, "currChapNum": plan.currChapNum}
       }
     }, (err, user) => {
-      bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
+      bibleApi.grabChapter(plan.currBook, plan.currChapNum, req, res);
     });
   });
 });
