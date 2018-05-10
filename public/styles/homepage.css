@@ -149,7 +149,6 @@ header h1 {
   font-size: 22pt;
 }
 
-
 .text {
   margin-bottom: 4rem;
   padding-top: 4rem;
@@ -157,4 +156,29 @@ header h1 {
 
 #nextButton {
   width: 50%;
+}
+
+#progressbar {
+  margin-top: 1rem;
+  background-color: #cccccc;
+  border-radius: 13px; /* (height of inner div) / 2 + padding */
+  padding: 3px;
+  position: relative;
+}
+
+#progressbar > #progressbar_filler {
+  background-color: white;
+  width: 50%; /* Adjust with JavaScript */
+  height: 20px;
+  border-radius: 10px;
+}
+
+#progressbar_percent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  align-content: center;
+  text-align: center;
 }
