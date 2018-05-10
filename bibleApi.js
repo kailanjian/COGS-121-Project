@@ -84,6 +84,8 @@ for (const key in bibleChapters) {
   bibleBooks.push(key);
 }
 
+mExports.bibleBooks = bibleBooks;
+
 /**
  * Gets the next chapter in the bible (or potentially the reading plan)
  * @param currBook the book that the user just read

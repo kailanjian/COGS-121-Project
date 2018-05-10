@@ -339,6 +339,36 @@ app.get('/api/plan/:planId/currChapter', (req, res) => {
   });
 });
 
+app.post('/api/plan/add', (req, res) => {
+  console.log("ADDING PLAN");
+  console.log(JSON.stringify(req.body));
+  let planName = req.body.planName;
+  let firstBook = req.body.firstBook;
+  let lastBook = req.body.lastBook;
+  let currBook = req.body.firstBook;
+  let currChapNum = 1;
+
+  let plan = new Plan({
+    planName: planName,
+    firstBook: firstBook,
+    lastBook: lastBook,
+    currBook: currBook,
+    currChapNum: currChapNum
+  });
+
+  plan.save((err, plan) => {
+    User.findByIdAndUpdate(
+      req.user._id, 
+      {$push: {plans: plan._id}},
+      (err, user) => {
+        res.json({
+          success: true,
+          plan: plan
+        });
+    });
+  })
+});
+
 // DEPRECATED
 app.get('/api/text', (req, res) => {
   console.log("boibobiobib");
@@ -434,13 +464,33 @@ app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
 app.get('/plans', (req, res) => {
   // TODO get plan data before posting page
   // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Plans',
-    // set page to render in layout
-    page: 'pages/plans.ejs',
-    context: getContext(req, res)
+  let plans = [];
+  
+  // form list of ids to query for in mongoose
+  let inArray = [];
+  for (let i = 0; i < req.user.plans.length; i++) {
+    let planId = req.user.plans[i];
+    inArray.push(mongoose.Types.ObjectId(planId));
+  }
+
+  Plan.find({
+    '_id': { $in: inArray}
+  }, function(err, plans){
+
+      let context = getContext(req, res);
+      context.plans = plans;
+
+      console.log("PLANS ARRAY");
+      console.log(JSON.stringify(plans));
+      res.render('layout', {
+        // set title
+        title: 'Plans',
+        // set page to render in layout
+        page: 'pages/plans.ejs',
+        context: context
+      });
   });
+
 });
 
 // login page
@@ -489,6 +539,18 @@ app.get('/read', (req, res) => {
     // set page to render in layout
     page: 'pages/read.ejs'
   });
+});
+
+app.get('/addplan', (req, res) => {
+    let context = getContext(req, res);
+    context.books = bibleApi.bibleBooks;
+
+    // render with ejs
+    res.render('layout', {
+      title: 'Plan',
+      page: 'pages/addplan.ejs',
+      context: context
+    })
 });
 
 app.get('/plan/:planId', (req, res) => {

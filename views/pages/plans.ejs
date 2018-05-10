@@ -3,10 +3,14 @@
   <a href="/index" class="plan">Bible in 365 Days</a>
   <a class="plan">Sample 2</a>
   <a href="#" id="plan1" class="plan">COGS 121 Plan</a>
-  <button>Add Plan</button>
+  <a href="/addplan">Add Plan</button>
 </div>
 <div class="plans">
-  <%= context.user.plans[0] %>
+  <ul>
+    <%for (var planNum in context.plans){%>
+    <a href="/plan/<%=context.plans[planNum]._id%>" ><%=context.plans[planNum].planName%></li>    
+    <%}%>
+  </ul>
   <!-- todo: loop through plans and make hrefs to corresponding plan page -->
 </div>
 <div class="text">
