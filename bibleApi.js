@@ -84,6 +84,7 @@ for (const key in bibleChapters) {
   bibleBooks.push(key);
 }
 
+mExports.bibleChapters = bibleChapters;
 mExports.bibleBooks = bibleBooks;
 
 /**
