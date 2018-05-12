@@ -176,7 +176,7 @@ app.post('/register', (req, res) => {
       let plan = new Plan({
         planName: "Bible in 365 Days",
         firstBook: "Genesis",
-        lastBook: "Revelations",
+        lastBook: "Revelation",
         currBook: "Genesis",
         currChapNum: 1
       })
@@ -308,6 +308,7 @@ app.get('/api/friends/get/requested', (req, res) => {
   }
   res.json(filteredFriends);
 });
+
 // endpoint for friends which have responded and confirmed
 app.get('/api/friends/get/confirmed', (req, res) => {
   let friends = req.user.friends;
@@ -328,6 +329,8 @@ app.get('/api/currChapter', (req, res) => {
   });
 });
 
+// end point to get a chapter plan
+// GET endpoint to get the next chapter for a plan for a user
 app.get('/api/plan/:planId/currChapter', (req, res) => {
   let planId = req.params.planId;
   console.log("curr chapter")
@@ -339,6 +342,9 @@ app.get('/api/plan/:planId/currChapter', (req, res) => {
   });
 });
 
+// end point to add a plan
+// body params: planName, firstBook, lastBook
+// POST these to create a plan
 app.post('/api/plan/add', (req, res) => {
   console.log("ADDING PLAN");
   console.log(JSON.stringify(req.body));
@@ -369,6 +375,52 @@ app.post('/api/plan/add', (req, res) => {
   })
 });
 
+// end point to get plan progress 
+app.get('/api/plan/:planId/progress', (req, res) => {
+  console.log("endpoint reached");
+  Plan.findById(req.params.planId, (err, plan) => {
+    // default plan type. if statemennt allows us to make assumptions
+    // about plan structure so we can add in alternate types later
+    console.log("getting plan " + JSON.stringify(plan));
+    if (plan.planType == "linear") 
+    {
+      console.log("linear plan entered");
+      let firstBook = plan.firstBook;
+      let lastBook = plan.lastBook;
+      let totalChapterCount = 0;
+      let userChapterCount = 0;
+      let bibleBooks = bibleApi.bibleBooks;
+
+      console.log(bibleBooks.indexOf(lastBook));
+      for (let i = bibleBooks.indexOf(firstBook); i <= bibleBooks.indexOf(lastBook); i++)
+      {
+        console.log("i: " + JSON.stringify(i));
+        if (i < bibleBooks.indexOf(plan.currBook))
+        {
+          userChapterCount += bibleApi.bibleChapters[bibleBooks[i]];
+        }
+        else if (i == bibleBooks.indexOf(plan.currBook))
+        {
+          userChapterCount += plan.currChapNum - 1;
+        }
+
+        console.log("i: " + JSON.stringify(i));
+        totalChapterCount += bibleApi.bibleChapters[bibleBooks[i]];
+      }
+
+      res.json({
+        userChaptersCount: userChapterCount,
+        totalChapterCount: totalChapterCount,
+        progress: userChapterCount/totalChapterCount 
+      })
+    }
+  });
+});
+
+app.get('/api/plan/:planId/streak', (req, res) => {
+  
+});
+
 // DEPRECATED
 app.get('/api/text', (req, res) => {
   console.log("boibobiobib");
@@ -386,9 +438,11 @@ app.get("/api/:planId/text", (req, res) => {
     console.log(JSON.stringify(plan));
     User.findByIdAndUpdate(req.user._id, {
       $push: {
-        log: {"type": "start", "currBook": plan.currBook, "currChapNum": plan.currChapNum}
+        "log": {"type": "start", "currBook": plan.currBook, "currChapNum": plan.currChapNum}
       }
     }, (err, user) => {
+      console.log("Got text");
+      console.log(err);
       bibleApi.grabChapter(plan.currBook, plan.currChapNum, req, res);
     });
   });
@@ -582,7 +636,7 @@ db.once('open', function () {
     currChapNum: Number,
     friends: [String],
     friendsin: [String],
-    log: [Object],
+    log: [],
     data: Object,
     plans: [String] // items are {planId, currBook, currChapNum}
   });
