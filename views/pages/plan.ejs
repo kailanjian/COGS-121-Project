@@ -10,12 +10,43 @@
   </div>
 </header>
 
-<div class="plans">
+<div class="container plan-page">
+  <div id="plan-title"><%= context.planName %></div>
+  <span class="plan-section-title">Today</span>
+  <div class="plan-section-desc">Last Read: <span id="chapter-title"></span></div>
+  <div class="plan-data-container">
+    <div id="daily-goal-completion" class="plan-data"></div>
+    <div class="plan-data-text centered">
+      <div id="daily-goal-title" class="plan-data-title"></div>
+      <div class="plan-data-desc">chapters read <br/> today</div>
+    </div>
+  </div>
+  <div class="centered">
+    <button class="resume-button btn btn-primary">Resume</button>
+  </div>
+  <span class="plan-section-title">Progress</span>
+  <div class="plan-data-container">
+    <div id="total-plan-completion" class="plan-data"></div>
+    <div class="plan-data-text centered">
+      <div id="total-goal-title" class="plan-data-title"></div>
+      <div id="total-goal-desc" class="plan-data-desc"></div>
+    </div>
+  </div>
   <div class="container">
-    <span class="pre-chapter-title">currently reading:</span>
-    <span id="chapter-title"></span>
-    <span class="continue-text">continue</span>
-    <i class="continue-icon fas fa-angle-right"></i>
+  <span class="plan-bottom-stat">
+    <i class="plan-icon fas fa-rocket"></i>
+    <span class="plan-bottom-stat-text centered">
+      <span class="plan-bottom-stat-title">12<br/></span>
+      <span class="plan-bottom-stat-desc">day goal streak</span>
+    </span>
+  </span>
+    <span id="days-started" class="plan-bottom-stat">
+    <i class="plan-icon far fa-clock"></i>
+    <span class="plan-bottom-stat-text centered">
+      <span class="plan-bottom-stat-title">17<br/></span>
+      <span class="plan-bottom-stat-desc">days since started</span>
+    </span>
+  </span>
   </div>
 </div>
 
@@ -48,7 +79,7 @@
 
 <script type="text/javascript">
   var planId = <%- JSON.stringify(context.planId) %>;
-  var currBook  = <%- JSON.stringify(context.currBook) %>;
+  var currBook = <%- JSON.stringify(context.currBook) %>;
   var currChapNum = <%- JSON.stringify(context.currChapNum) %>;
 </script>
 <script src="/scripts/plan.js"></script>
