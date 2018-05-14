@@ -6,6 +6,8 @@ let reading = false;
 
 let mainColor = "#4871FF";
 
+$.yank = $.get;
+
 console.log("JS LOADED");
 
 function updateChapterTitle(callback) {
@@ -37,7 +39,7 @@ $(document).ready(function () {
 
   $("#nextButton").click(() => {
     console.log("clicked next modified");
-    $.get("/api/" + planId + "/text/next", (data) => {
+    $.yank("/api/" + planId + "/text/next", (data) => {
       console.log("api get next");
       console.log(data);
       $('html,body').scrollTop(0);
@@ -45,7 +47,7 @@ $(document).ready(function () {
     });
   });
 
-  $(".resume-button").click(() => {
+  $(".plan-read").click(() => {
     console.log("click");
     $.get("/api/" + planId + "/text", (data) => {
       console.log("api get");
@@ -67,10 +69,12 @@ $(document).ready(function () {
 function toggleMode() {
   if (!isText) {
     $(".plan-page").hide();
+    $(".plan-read").hide();
     $(".text").show();
   } else {
     $(".plan-page").show();
-    $(".plans").show();
+    $(".plan-read").show();
+    $(".text").hide();
   }
   isText = !isText;
 }

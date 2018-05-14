@@ -13,8 +13,25 @@
   font-weight: normal;
 }
 
-.plan-page {
+.plan-read {
   padding-top: 3.5rem;
+}
+
+.plan-read > div {
+  padding-bottom: .7rem;
+  border-bottom: 1.5px lightgrey solid;
+}
+
+.plan-read:hover {
+  cursor: pointer;
+  color: var(--main-color);
+}
+
+#chapter-title {
+  font-size: 3rem;
+  font-weight: bolder;
+  line-height: 2.5rem;
+  margin-bottom: .5rem;
 }
 
 #plan-title {
@@ -24,14 +41,11 @@
 .plan-section-title {
   border-bottom: var(--main-color) 2px solid;
   font-weight: lighter;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .plan-section-desc {
-}
-
-.resume-button {
-  width: 40%;
-  margin-bottom: .5rem;
 }
 
 .plan-data {
@@ -53,11 +67,16 @@
 }
 
 .plan-data-container {
+  display: table-cell;
   position: relative;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  width: 50%;
 }
 
+.plan-circles {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  display: table;
+}
 .plan-data-title {
   font-size: 2rem;
 }
@@ -65,15 +84,24 @@
 .plan-data-desc {
   font-size: .8rem;
 }
+.plan-bottom-cont {
+  display: flex;
+  flex-direction: row;
+}
 
 .plan-bottom-stat {
-  width: 8rem;
+  width: 30%;
   display: inline-table;
   vertical-align: top;
 }
 
+.middle-bottom-stat {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
 .plan-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   display: table-cell;
   vertical-align: top;
 }
@@ -88,12 +116,9 @@
 }
 
 .plan-bottom-stat-title {
-  font-size: 2rem;
+  font-size: 1.3rem;
+  font-weight: bolder;
   line-height: 1.3rem;
-}
-
-#days-started {
-  float: right;
 }
 
 
