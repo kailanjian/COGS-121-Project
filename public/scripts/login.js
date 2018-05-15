@@ -18,8 +18,29 @@ $(document).ready(function () {
         }
     })
 
+    $("#login-submit-button").click(() => {
+        let username = $("#login-username").val();
+        let password = $("#login-password").val();
+        $.thrust("/login",
+        {
+            username: username,
+            password: password
+        }, 
+        (data) => 
+        {
+            if (data.error)
+            {
+                alert(error)
+            }
+            else
+            {
+                window.location.replace("/plans");
+            }
+        })
+    });
 
 
-});
+
+   });
 
 

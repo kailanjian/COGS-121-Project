@@ -429,6 +429,45 @@ app.get('/api/plan/:planId/streak', (req, res) => {
  // TODO 
 });
 
+// TODO: TOTAL CHAPTER across plans
+
+// gets number of chapters today
+function getDailyChapters(user, planId)
+{
+  let start = new Date();
+  start.setHours(0, 0, 0, 0);
+  
+  let end = new Date();
+  end.setHours(23,59,59,9999);
+
+  let dailyChapters = 0;
+
+  for (let i = 0; i < user.log.length; i++)
+  {
+    let log = user.log[i];
+    if (log.type == "next")
+    {
+      if (log.planId == planId || !planId)
+      {
+        if (log.date < end && log.date > start)
+        {
+          dailyChapters++;
+        }
+      }
+    }
+  }
+  return dailyChapters;
+}
+
+// get number of chapters read today
+app.get('/api/plan/:planId/dailyChapters', (req, res) => {
+  res.json({
+    chapters: getDailyChapters(req.user)
+  })
+});
+
+// TODO: put friend on plan
+
 // endpoint to get number of days since start of plan
 app.get('/api/plan/:planId/days', (req, res) => {
   let startDate = req.user.log[0].date;
@@ -613,7 +652,7 @@ app.get('/login', checkLoginMiddleware, (req, res) => {
 });
 
 // profile page
-app.get('/profile/:userName', checkLoginMiddleware, (req, res) => {
+app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
   let userName = req.params.userName;
   let context = getContext(req, res);
   if (userName)
