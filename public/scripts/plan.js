@@ -41,6 +41,13 @@ function initPlanData() {
     loadPlanCircle(data.userChaptersCount, data.totalChapterCount);
   });
 
+  getNonCircleData();
+}
+
+/**
+ * Yanks data from server for data not in the UI circles
+ */
+function getNonCircleData() {
   // yanks data for days since started
   $.yank("/api/plan/" + planId + "/days", (data) => {
     $("#plan-days-since").html(Math.round(data.days) + "<br/>");
@@ -48,7 +55,14 @@ function initPlanData() {
 
   // yanks amount of time spent reading
   $.yank("/api/plan/" + planId + "/time", (data) => {
-    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
+    let hours = data.hours;
+    let html;
+    if (hours < 10) {
+      html = Math.round(data.hours * 10) / 10 + "<br/>";
+    } else {
+      html = Math.round(data.hours) + "<br/>";
+    }
+    $("#plan-hours-spent").html(html);
   });
 }
 
@@ -58,15 +72,7 @@ function updatePlanData() {
     updatePlanCircle(data.userChaptersCount, data.totalChapterCount);
   });
 
-  // yanks data for days since started
-  $.yank("/api/plan/" + planId + "/days", (data) => {
-    $("#plan-days-since").html(Math.round(data.days) + "<br/>");
-  });
-
-  // yanks amount of time spent reading
-  $.yank("/api/plan/" + planId + "/time", (data) => {
-    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
-  });
+  getNonCircleData();
 }
 
 $(document).ready(function () {
