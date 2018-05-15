@@ -98,22 +98,20 @@ const checkLoginMiddleware = function (req, res, next) {
   }
   else {
     if (req.path == "/login") next();
-    else
-    {
+    else {
       // DEBUG PATH: logs in automatically if you are not on a valid user account
       if (DEBUG) {
         User.findOne({}, (err, user) => {
           //console.log("found user");
           //console.log(JSON.stringify(user));
-          req.login(user, function(err){
-            if(err) return next(err);
+          req.login(user, function (err) {
+            if (err) return next(err);
           });
           next();
         });
-      } else
-      {
-      console.log("need to login");
-      res.redirect('/login');
+      } else {
+        console.log("need to login");
+        res.redirect('/login');
       }
     }
   }
@@ -202,7 +200,7 @@ app.post('/register', (req, res) => {
               res.redirect('/login');
             }
             res.redirect('/login');
-            
+
           });
         });
       });
@@ -254,8 +252,7 @@ app.post('/api/friends/add', (req, res) => {
   if (!req.user) {
     res.json({error: 'You must be logged in'});
   }
-  else if (req.user.friends.indexOf(friendUsername) != -1)
-  {
+  else if (req.user.friends.indexOf(friendUsername) != -1) {
     res.json({success: 'Already added friend'});
   }
   else {
@@ -323,7 +320,7 @@ app.get('/api/friends/get/confirmed', (req, res) => {
   for (let i = 0; i < friends.length; i++) {
     if (req.user.friendsin.indexOf(friends[i]) != -1) {
       filteredFriends.push({username: friends[i]});
-    
+
     }
   }
   res.json(filteredFriends);
@@ -372,14 +369,14 @@ app.post('/api/plan/add', (req, res) => {
 
   plan.save((err, plan) => {
     User.findByIdAndUpdate(
-      req.user._id, 
+      req.user._id,
       {$push: {plans: plan._id}},
       (err, user) => {
         res.json({
           success: true,
           plan: plan
         });
-    });
+      });
   })
 });
 
@@ -390,8 +387,7 @@ app.get('/api/plan/:planId/progress', (req, res) => {
     // default plan type. if statemennt allows us to make assumptions
     // about plan structure so we can add in alternate types later
     console.log("getting plan " + JSON.stringify(plan));
-    if (plan.planType == "linear") 
-    {
+    if (plan.planType == "linear") {
       console.log("linear plan entered");
       let firstBook = plan.firstBook;
       let lastBook = plan.lastBook;
@@ -400,15 +396,12 @@ app.get('/api/plan/:planId/progress', (req, res) => {
       let bibleBooks = bibleApi.bibleBooks;
 
       console.log(bibleBooks.indexOf(lastBook));
-      for (let i = bibleBooks.indexOf(firstBook); i <= bibleBooks.indexOf(lastBook); i++)
-      {
+      for (let i = bibleBooks.indexOf(firstBook); i <= bibleBooks.indexOf(lastBook); i++) {
         console.log("i: " + JSON.stringify(i));
-        if (i < bibleBooks.indexOf(plan.currBook))
-        {
+        if (i < bibleBooks.indexOf(plan.currBook)) {
           userChapterCount += bibleApi.bibleChapters[bibleBooks[i]];
         }
-        else if (i == bibleBooks.indexOf(plan.currBook))
-        {
+        else if (i == bibleBooks.indexOf(plan.currBook)) {
           userChapterCount += plan.currChapNum - 1;
         }
 
@@ -419,14 +412,14 @@ app.get('/api/plan/:planId/progress', (req, res) => {
       res.json({
         userChaptersCount: userChapterCount,
         totalChapterCount: totalChapterCount,
-        progress: userChapterCount/totalChapterCount 
+        progress: userChapterCount / totalChapterCount
       })
     }
   });
 });
 
 app.get('/api/plan/:planId/streak', (req, res) => {
- // TODO 
+  // TODO
 });
 
 // TODO: TOTAL CHAPTER across plans
@@ -472,28 +465,25 @@ app.get('/api/plan/:planId/dailyChapters', (req, res) => {
 app.get('/api/plan/:planId/days', (req, res) => {
   let startDate = req.user.log[0].date;
   let diff = Date.now() - startDate;
-  let seconds = diff/1000;
-  let hours = seconds/3600;
-  let days = hours/24;
-  
+  let seconds = diff / 1000;
+  let hours = seconds / 3600;
+  let days = hours / 24;
+
   res.json({
     time: diff,
     days: days
   })
 });
 
-function getUserLogTime(user, planId)
-{
+function getUserLogTime(user, planId) {
   let totalTime = 0;
   console.log("Plan id: " + JSON.stringify(planId));
   if (!planId) console.log(JSON.stringify(user.log));
   for (let i = 0; i < user.log.length; i++) {
     let log = user.log[i];
     // if there is no planId, just assume we want all plans
-    if (!planId || log.planId == planId)
-    {
-      if (log.type == "next")
-      {
+    if (!planId || log.planId == planId) {
+      if (log.type == "next") {
         totalTime += Number(log.time);
       }
     }
@@ -507,7 +497,7 @@ app.get('/api/plan/all/time', (req, res) => {
   let time = getUserLogTime(req.user);
   res.json({
     "time": time,
-    "hours": time/3600
+    "hours": time / 3600
   });
 });
 
@@ -515,7 +505,7 @@ app.get('/api/plan/:planId/time', (req, res) => {
   let time = getUserLogTime(req.user, req.params.planId);
   res.json({
     "time": time,
-    "hours": time/3600
+    "hours": time / 3600
   });
 });
 
@@ -526,7 +516,13 @@ app.get("/api/:planId/text", (req, res) => {
 //    console.log(JSON.stringify(plan));
     User.findByIdAndUpdate(req.user._id, {
       $push: {
-        "log": {"type": "start", "currBook": plan.currBook, "currChapNum": plan.currChapNum, "date": Date.now(), "planId": plan._id}
+        "log": {
+          "type": "start",
+          "currBook": plan.currBook,
+          "currChapNum": plan.currChapNum,
+          "date": Date.now(),
+          "planId": plan._id
+        }
       }
     }, (err, user) => {
       console.log("Got text");
@@ -570,11 +566,19 @@ app.post('/api/:planId/text/next', (req, res) => {
       console.log("updated plan");
       User.findByIdAndUpdate(req.user._id, {
         $push: {
-          log: {"type": "next", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum, "date": Date.now(), "time": time, "planId": plan._id}
-        }}, (err, user) => {
-          console.log("running grab chapter");
-          bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
-        });
+          log: {
+            "type": "next",
+            "currBook": req.user.currBook,
+            "currChapNum": req.user.currChapNum,
+            "date": Date.now(),
+            "time": time,
+            "planId": plan._id
+          }
+        }
+      }, (err, user) => {
+        console.log("running grab chapter");
+        bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
+      });
     });
   });
 });
@@ -611,7 +615,7 @@ app.get('/plans', checkLoginMiddleware, (req, res) => {
   // TODO get plan data before posting page
   // render with ejs
   let plans = [];
-  
+
   // form list of ids to query for in mongoose
   let inArray = [];
   for (let i = 0; i < req.user.plans.length; i++) {
@@ -620,21 +624,22 @@ app.get('/plans', checkLoginMiddleware, (req, res) => {
   }
 
   Plan.find({
-    '_id': { $in: inArray}
-  }, function(err, plans){
+    '_id': {$in: inArray}
+  }, function (err, plans) {
 
-      let context = getContext(req, res);
-      context.plans = plans;
+    let context = getContext(req, res);
+    context.plans = plans;
+    context.books = bibleApi.bibleBooks;
 
-      console.log("PLANS ARRAY");
-      console.log(JSON.stringify(plans));
-      res.render('layout', {
-        // set title
-        title: 'Plans',
-        // set page to render in layout
-        page: 'pages/plans.ejs',
-        context: context
-      });
+    console.log("PLANS ARRAY");
+    console.log(JSON.stringify(plans));
+    res.render('layout', {
+      // set title
+      title: 'Plans',
+      // set page to render in layout
+      page: 'pages/plans.ejs',
+      context: context
+    });
   });
 
 });
@@ -655,12 +660,10 @@ app.get('/login', checkLoginMiddleware, (req, res) => {
 app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
   let userName = req.params.userName;
   let context = getContext(req, res);
-  if (userName)
-  {
+  if (userName) {
     console.log("user name: " + userName);
     let context = getContext(req, res);
-    User.findOne({"username": userName}, (err, user) => 
-    {
+    User.findOne({"username": userName}, (err, user) => {
       context.profile = user;
       console.log("profile: " + JSON.stringify(user));
       console.log("error: " + JSON.stringify(err));
@@ -671,8 +674,7 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
       })
     });
   }
-  else
-  {
+  else {
     console.log("no user name");
     context.profile = req.user;
     // render with ejs
@@ -689,14 +691,14 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
 
 // social page
 app.get('/social', checkLoginMiddleware, (req, res) => {
-    // render with ejs
-    res.render('layout', {
-        // set title
-        title: 'Social',
-        // set page to render in layout
-        page: 'pages/social.ejs',
-        context: getContext(req, res)
-    });
+  // render with ejs
+  res.render('layout', {
+    // set title
+    title: 'Social',
+    // set page to render in layout
+    page: 'pages/social.ejs',
+    context: getContext(req, res)
+  });
 });
 
 // read page
@@ -708,18 +710,6 @@ app.get('/read', checkLoginMiddleware, (req, res) => {
     // set page to render in layout
     page: 'pages/read.ejs'
   });
-});
-
-app.get('/addplan', checkLoginMiddleware, (req, res) => {
-    let context = getContext(req, res);
-    context.books = bibleApi.bibleBooks;
-
-    // render with ejs
-    res.render('layout', {
-      title: 'Plan',
-      page: 'pages/addplan.ejs',
-      context: context
-    })
 });
 
 app.get('/plan/:planId', checkLoginMiddleware, (req, res) => {
@@ -766,7 +756,7 @@ db.once('open', function () {
     // name of plan e.g. Bible in 365 days
     planName: String,
     // plan type is in case we decide to add more complex plans than book to book
-    planType: {type: String, enum: ['linear'], default: 'linear'}, 
+    planType: {type: String, enum: ['linear'], default: 'linear'},
     // for regular plan type. Read from start of first book to start of last book
     firstBook: String,
     lastBook: String,

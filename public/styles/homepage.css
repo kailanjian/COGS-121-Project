@@ -74,7 +74,7 @@
 
 .plan-circles {
   margin-bottom: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: table;
 }
 .plan-data-title {
@@ -87,6 +87,7 @@
 .plan-bottom-cont {
   display: flex;
   flex-direction: row;
+  margin-top: 2rem;
 }
 
 .plan-bottom-stat {

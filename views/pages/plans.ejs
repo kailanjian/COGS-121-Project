@@ -1,4 +1,88 @@
-<!-- data page (sample not sure if we need this) -->
+<section class="header">
+  <div class="container last-time">
+    <p class="label">Last Time:</p>
+    <!--connect with backend-->
+    <h1>Put Plan Name Here</h1>
+    <!--connect with backend-->
+    <h3>Put Book-name Chapter# Here</h3>
+    <div id="resume">
+      <!-- Link to reading page -->
+      <button href="" type="button" class="btn-lg">Resume Reading</button>
+    </div>
+  </div>
+</section>
+
+<section class="plan-labels">
+  <div class="container">
+    <div class="row">
+      <div id="current-label" class="col-sm-6">
+        <p class="label link">Current Plans</p>
+        <hr>
+      </div>
+      <div id="completed-label" class="col-sm-6">
+        <p class="label link">Completed Plans</p>
+        <hr style="visibility: hidden;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="current-plans" class="plans-list">
+  <div class="container">
+    <div class="row">
+
+      <!-- Link to single plan page (page with stats) -->
+      <% for (var planNum in context.plans){ %>
+      <a class="plan-link" href="/plan/<%= context.plans[planNum]._id %>">
+        <div class="col-sm-12 plan">
+          <p><%= context.plans[planNum].planName %></p>
+        </div>
+        <div class="progress">
+          <div class="progress-bar progress-20"></div>
+        </div>
+      </a>
+      <% } %>
+
+      <!-- link to create new plan page -->
+      <a class="create-plan-link" href="#">
+        <div class="col-sm-12 new-plan">
+          <i class="fas fa-plus"></i>
+          <p>Create New Plan</p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section id="completed-plans" class="plans-list">
+  <div class="container">
+    <div class="row">
+
+      <a class="plan-link" href="">
+        <div class="col-sm-12 plan">
+          <p>Epistles of Paul</p>
+        </div>
+        <div class="progress">
+          <div class="progress-bar progress-complete"></div>
+        </div>
+      </a>
+
+      <a class="plan-link" href="">
+        <div class="col-sm-12 plan">
+          <p>Daily Proverbs</p>
+        </div>
+        <div class="progress">
+          <div class="progress-bar progress-complete"></div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- data page (sample not sure if we need this)
 <div class="plans">
   <a href="/index" class="plan">Bible in 365 Days</a>
   <a class="plan">Sample 2</a>
@@ -7,11 +91,11 @@
 </div>
 <div class="plans">
   <ul>
-    <%for (var planNum in context.plans){%>
-    <a href="/plan/<%=context.plans[planNum]._id%>" ><%=context.plans[planNum].planName%></li>    
-    <%}%>
+    <% for (var planNum in context.plans){ %>
+    <a href="/plan/<%= context.plans[planNum]._id %>" ><%= context.plans[planNum].planName %></li>
+    <% } %>
   </ul>
-  <!-- todo: loop through plans and make hrefs to corresponding plan page -->
+   todo: loop through plans and make hrefs to corresponding plan page
 </div>
 <div class="text">
   <a href="#" id="back">back</a>
@@ -19,4 +103,28 @@
   </div>
 </div>
 
-<script src="scripts/plans.js"></script>
+<script src="scripts/plans.js"></script> -->
+
+<div class="add-plan-background container ">
+  <div class="add-plan-container container">
+    <div class="plan-add-titles">Plan Name</div>
+    <input type="text" id="plan-name-select" class="form-control" placeholder="e.g. Bible in 365 Days">
+    <div class="plan-add-titles">Start Book</div>
+    <select id="first-book-select">
+      <% for (var bookNum in context.books){ %>
+      <option value="<%= context.books[bookNum] %>"><%= context.books[bookNum] %></option>
+      <% } %>
+    </select>
+    <div class="plan-add-titles">End Book</div>
+    <select id="last-book-select">
+      <% for (var bookNum in context.books) { %>
+      <option value="<%= context.books[bookNum] %>"><%= context.books[bookNum] %></option>
+      <% } %>
+    </select>
+    <div class="centered plan-add-btn-container">
+      <button id="done-button" class="plan-add-btn btn btn-primary">Done</button>
+      <button id="cancel-button" class="plan-add-btn btn btn-danger">Cancel</button>
+    </div>
+  </div>
+
+</div>

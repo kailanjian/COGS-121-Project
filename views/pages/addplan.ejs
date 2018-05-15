@@ -1,22 +1,4 @@
-<div class="container">
-  <p>Plan Name</p>
-  <input type="text" id="plan-name-select" placeholder="e.g. Bible in 365 Days"> 
-  <p>Start Book</p>
-  <select id="first-book-select">
-    <%for (var bookNum in context.books){%>
-      <option value="<%=context.books[bookNum]%>"><%=context.books[bookNum]%></option>
-    <%}%>
-  </select> 
-  <p>End Book</p>
-  <select id="last-book-select">
-    <%for (var bookNum in context.books) {%>
-      <option value="<%=context.books[bookNum]%>"><%=context.books[bookNum]%></option>
-    <%}%>
-  </select>
-  <button id="cancel-button">Cancel</button>
-  <button id="done-button">Done</button>
-  
-</div>
+
 
 <!--
   Need to fix this code to display the profile of the reading plan!!!!
@@ -37,6 +19,3 @@
 </div>
 -->
 
-
-<script src="/scripts/addplan.js"></script>
-<link rel="stylesheet" href="/styles/homepage.css"/>

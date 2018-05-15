@@ -1,47 +1,71 @@
-// main javascript file
-// Note: ALL VARIABLES HERE WILL BE GLOBAL
-let isText = false;
-let isStats = false;
-let reading = false;
-
 // TIMER CODE
 let timer = 0;
 let isTimerActive = false;
 
-function startTimer() 
-{
+let dailyCircle = {};
+let planCircle = {};
+
+function startTimer() {
   isTimerActive = true;
 }
-function restartTimer() 
-{
+
+function restartTimer() {
   isTimerActive = true;
   timer = 0;
 }
-function stopTimer()
-{
+
+function stopTimer() {
   timer = 0;
   isTimerActive = false;
 }
-function getTime()
-{
+
+function getTime() {
   return timer;
 }
 
 let mainColor = "#4871FF";
 
-$.yank = $.get;
-
-console.log("JS LOADED");
-
-
 function updateChapterTitle(callback) {
-  $.get("/api/plan/" + planId + "/currChapter", (data) => {
-    console.log("boibooibobioboiib");
+  $.yank("/api/plan/" + planId + "/currChapter", (data) => {
     console.log(JSON.stringify(data));
     $("#chapter-title").html(data.currBook + " " + data.currChapNum);
     if (callback) {
       callback();
     }
+  });
+}
+
+function initPlanData() {
+  // load data for total plan
+  $.yank("/api/plan/" + planId + "/progress", (data) => {
+    loadPlanCircle(data.userChaptersCount, data.totalChapterCount);
+  });
+
+  // yanks data for days since started
+  $.yank("/api/plan/" + planId + "/days", (data) => {
+    $("#plan-days-since").html(Math.round(data.days) + "<br/>");
+  });
+
+  // yanks amount of time spent reading
+  $.yank("/api/plan/" + planId + "/time", (data) => {
+    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
+  });
+}
+
+function updatePlanData() {
+  // load data for total plan
+  $.yank("/api/plan/" + planId + "/progress", (data) => {
+    updatePlanCircle(data.userChaptersCount, data.totalChapterCount);
+  });
+
+  // yanks data for days since started
+  $.yank("/api/plan/" + planId + "/days", (data) => {
+    $("#plan-days-since").html(Math.round(data.days) + "<br/>");
+  });
+
+  // yanks amount of time spent reading
+  $.yank("/api/plan/" + planId + "/time", (data) => {
+    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
   });
 }
 
@@ -53,17 +77,15 @@ $(document).ready(function () {
   //update these with actual data
   let chaptersReadToday = 6;
   let dailyChapterGoal = 10;
-  let totalChaptersRead = 100;
-  let totalChaptersGoal = 300;
 
+  initPlanData();
   loadDGCircle(chaptersReadToday, dailyChapterGoal);
-  loadPlanCircle(totalChaptersRead, totalChaptersGoal);
 
   updateChapterTitle();
 
   $("#nextButton").click(() => {
     console.log("clicked next modified");
-    $.post("/api/" +planId + "/text/next", 
+    $.thrust("/api/" + planId + "/text/next",
       {
         "time": getTime()
       },
@@ -79,11 +101,13 @@ $(document).ready(function () {
   $(".plan-read").click(() => {
     console.log("click");
     startTimer();
-    $.get("/api/" + planId + "/text", 
+    $.yank("/api/" + planId + "/text",
       (data) => {
         startTimer();
+        $(".plan-page").hide();
+        $(".plan-read").hide();
+        $(".text").show();
         $(".content").html(data.passages[0]);
-        toggleMode();
       });
   });
 
@@ -95,37 +119,23 @@ $(document).ready(function () {
     toggleStats();
   });
 
-  window.setInterval(() => 
-    {
-      if (document.visibilityState == "visible" && isTimerActive == true)
-      {
-        timer++;
-      }
-    }, 1000)
+  window.setInterval(() => {
+    if (document.visibilityState == "visible" && isTimerActive == true) {
+      timer++;
+    }
+  }, 1000)
 });
 
 function toggleMode() {
-  if (!isText) {
-    $(".plan-page").hide();
-    $(".plan-read").hide();
-    $(".text").show();
+  if (!$(".text").is(":visible")) {
+    window.location = "/plans";
   } else {
+    updatePlanData();
     $(".plan-page").show();
     $(".plan-read").show();
     $(".text").hide();
   }
-  isText = !isText;
 }
-
-//
-// function toggleStats() {
-//   if (isStats == true) {
-//     $(".graph").hide()
-//   } else {
-//     $(".graph").show()
-//   }
-//   isStats = !isStats;
-//}
 
 /*
 Head navbar animation
@@ -175,7 +185,12 @@ function hasScrolled() {
  */
 function loadDGCircle(todayRead, dailyChapterGoal) {
   $("#daily-goal-title").html(todayRead + " of " + dailyChapterGoal);
-  loadCircle("#daily-goal-completion", todayRead, dailyChapterGoal);
+  dailyCircle = loadCircle("#daily-goal-completion", todayRead, dailyChapterGoal);
+}
+
+function updateDGCircle(todayRead, dailyChapterGoal) {
+  $("#daily-goal-title").html(todayRead + " of " + dailyChapterGoal);
+  animateCircle(dailyCircle, todayRead, dailyChapterGoal);
 }
 
 /**
@@ -188,9 +203,14 @@ function loadPlanCircle(totalRead, totalChapters) {
   $("#total-goal-title").html(percentText);
   $("#total-goal-desc").html(totalRead + "/" + totalChapters + "<br/>chapters read");
 
-  loadCircle("#total-plan-completion", totalRead, totalChapters);
+  planCircle = loadCircle("#total-plan-completion", totalRead, totalChapters);
+}
 
-
+function updatePlanCircle(totalRead, totalChapters) {
+  let percentText = Math.round(totalRead / totalChapters * 100) + "%";
+  $("#total-goal-title").html(percentText);
+  $("#total-goal-desc").html(totalRead + "/" + totalChapters + "<br/>chapters read");
+  animateCircle(planCircle, totalRead, totalChapters);
 }
 
 /**
@@ -217,6 +237,11 @@ function loadCircle(element, part, total) {
     }
   });
   //make sure only go through circle once
+  animateCircle(circle, part, total);
+  return circle;
+}
+
+function animateCircle(circle, part, total) {
   let completion = part / total;
   circle.animate(completion > 1 ? 1 : completion);
 }
