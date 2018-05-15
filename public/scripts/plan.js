@@ -27,6 +27,9 @@ function getTime()
   return timer;
 }
 
+let mainColor = "#4871FF";
+
+$.yank = $.get;
 
 console.log("JS LOADED");
 
@@ -47,6 +50,14 @@ $(document).ready(function () {
   $(".graph").hide();
   $(".back-arrow").hide();
 
+  //update these with actual data
+  let chaptersReadToday = 6;
+  let dailyChapterGoal = 10;
+  let totalChaptersRead = 100;
+  let totalChaptersGoal = 300;
+
+  loadDGCircle(chaptersReadToday, dailyChapterGoal);
+  loadPlanCircle(totalChaptersRead, totalChaptersGoal);
 
   updateChapterTitle();
 
@@ -64,8 +75,8 @@ $(document).ready(function () {
         $(".content").html(data.passages[0]);
       });
   });
-  
-  $(".plans").click(() => {
+
+  $(".plan-read").click(() => {
     console.log("click");
     startTimer();
     $.get("/api/" + planId + "/text", 
@@ -95,13 +106,13 @@ $(document).ready(function () {
 
 function toggleMode() {
   if (!isText) {
-    $(".plans").hide();
-    $(".all_graphs").hide();
+    $(".plan-page").hide();
+    $(".plan-read").hide();
     $(".text").show();
   } else {
+    $(".plan-page").show();
+    $(".plan-read").show();
     $(".text").hide();
-    $(".all_graphs").show();
-    $(".plans").show();
   }
   isText = !isText;
 }
@@ -155,4 +166,57 @@ function hasScrolled() {
   }
 
   lastScrollTop = st;
+}
+
+/**
+ * Loads daily goal circle
+ * @param todayRead number of chapters read this day
+ * @param dailyChapterGoal daily goal (# of chapters)
+ */
+function loadDGCircle(todayRead, dailyChapterGoal) {
+  $("#daily-goal-title").html(todayRead + " of " + dailyChapterGoal);
+  loadCircle("#daily-goal-completion", todayRead, dailyChapterGoal);
+}
+
+/**
+ * Loads total goal circle
+ * @param totalRead total # of chapters read
+ * @param totalChapters total # of chapters needed to read to finish
+ */
+function loadPlanCircle(totalRead, totalChapters) {
+  let percentText = Math.round(totalRead / totalChapters * 100) + "%";
+  $("#total-goal-title").html(percentText);
+  $("#total-goal-desc").html(totalRead + "/" + totalChapters + "<br/>chapters read");
+
+  loadCircle("#total-plan-completion", totalRead, totalChapters);
+
+
+}
+
+/**
+ * Loads circle in element
+ * @param element - jquery-style selection. e.g. "#element"
+ * @param part - how much the user has read
+ * @param total - how much the user plans to read
+ */
+function loadCircle(element, part, total) {
+  let circle = new ProgressBar.Circle(element, {
+    color: mainColor,
+    // This has to be the same size as the maximum width to
+    // prevent clipping
+    strokeWidth: 4,
+    trailWidth: 1,
+    easing: 'easeInOut',
+    duration: 1400,
+    from: {color: '#aaa', width: 2},
+    to: {color: mainColor, width: 3},
+    // Set default step function for all animate calls
+    step: function (state, circle) {
+      circle.path.setAttribute('stroke', state.color);
+      circle.path.setAttribute('stroke-width', state.width);
+    }
+  });
+  //make sure only go through circle once
+  let completion = part / total;
+  circle.animate(completion > 1 ? 1 : completion);
 }

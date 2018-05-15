@@ -10,13 +10,91 @@
   </div>
 </header>
 
-<div class="plans">
+<div class="plan-read">
   <div class="container">
-    <span class="pre-chapter-title">currently reading:</span>
-    <span id="chapter-title"></span>
-    <span class="continue-text">continue</span>
-    <i class="continue-icon fas fa-angle-right"></i>
+    <div>Currently Reading:</div>
+    <div id="chapter-title"></div>
+    <div class="centered">
+      continue <i style="font-size: .7rem" class="fas fa-chevron-right"></i>
+    </div>
   </div>
+</div>
+
+<div class="container plan-page">
+  <!--<div id="plan-title"><%= context.planName %></div>-->
+  <!--<span class="plan-section-title">Plan Stats</span>-->
+  <div class="plan-circles centered">
+    <div class="plan-data-container">
+      <div id="daily-goal-completion" class="plan-data"></div>
+      <div class="plan-data-text centered">
+        <div id="daily-goal-title" class="plan-data-title"></div>
+        <div class="plan-data-desc">chapters read <br/> today</div>
+      </div>
+    </div>
+    <div class="plan-data-container">
+      <div id="total-plan-completion" class="plan-data"></div>
+      <div class="plan-data-text centered">
+        <div id="total-goal-title" class="plan-data-title"></div>
+        <div id="total-goal-desc" class="plan-data-desc"></div>
+      </div>
+    </div>
+  </div>
+  <div class="container centered plan-bottom-cont">
+    <span class="plan-bottom-stat">
+      <i class="plan-icon fas fa-rocket"></i>
+      <span class="plan-bottom-stat-text centered">
+        <span class="plan-bottom-stat-title">12<br/></span>
+        <span class="plan-bottom-stat-desc">day goal streak</span>
+      </span>
+    </span>
+    <span class="middle-bottom-stat plan-bottom-stat">
+      <i class="plan-icon far fa-clock"></i>
+      <span class="plan-bottom-stat-text centered">
+        <span class="plan-bottom-stat-title">14<br/></span>
+        <span class="plan-bottom-stat-desc">total hours spent</span>
+      </span>
+    </span>
+    <span class="plan-bottom-stat">
+      <i class="plan-icon far fa-calendar-alt"></i>
+      <span class="plan-bottom-stat-text centered">
+        <span class="plan-bottom-stat-title">18<br/></span>
+        <span class="plan-bottom-stat-desc">days since started</span>
+      </span>
+    </span>
+  </div>
+  <div class="plan-section-title">Friends on this Plan</div>
+  <ul class="list-group" id="pending-friends-list">
+    <li class="friend-list-item">
+      <div class="friend-container">
+        <span class="friend-picture"></span>
+        <span class="friend-name" data-content="username">Krikor Ailanjian</span>
+        <div class="friend-sub">
+          <span data-content="hrs"></span>
+          <span data-content="chapters"></span>
+        </div>
+      </div>
+    </li>
+    <li class="friend-list-item">
+      <div class="friend-container">
+        <span class="friend-picture"></span>
+        <span class="friend-name" data-content="username">Jonathan Lai</span>
+        <div class="friend-sub">
+          <span data-content="hrs"></span>
+          <span data-content="chapters"></span>
+        </div>
+      </div>
+    </li>
+    <li class="friend-list-item">
+      <div class="friend-container">
+        <span class="friend-picture"></span>
+        <span class="friend-name" data-content="username">Yuka Okina</span>
+        <div class="friend-sub">
+          <span data-content="hrs"></span>
+          <span data-content="chapters"></span>
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>
 
 <!--
@@ -48,7 +126,7 @@
 
 <script type="text/javascript">
   var planId = <%- JSON.stringify(context.planId) %>;
-  var currBook  = <%- JSON.stringify(context.currBook) %>;
+  var currBook = <%- JSON.stringify(context.currBook) %>;
   var currChapNum = <%- JSON.stringify(context.currChapNum) %>;
 </script>
 <script src="/scripts/plan.js"></script>

@@ -1,13 +1,21 @@
 :root {
-    --main-bg-color: #ffffff;
-    --sec-bg-color: #84bc9c;
-    --main-hi-color: #2ca58d;
-    --sec-hi-color: #d4c685;
-    --dark-hi-color: #0a2342;
+    --main-color: #4871FF;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: #444444;
+}
+
+.btn-primary {
+  background-color: var(--main-color);
+}
+
+.btn {
+  box-shadow: 0 5px 3px 0 darkgrey;
 }
 
 .centered {
     text-align: center;
     width: 100%;
-    background-color: var(--main-bg-color);
 }
