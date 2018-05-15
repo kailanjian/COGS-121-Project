@@ -4,11 +4,35 @@ let isText = false;
 let isStats = false;
 let reading = false;
 
+// TIMER CODE
+let timer = 0;
+let isTimerActive = false;
+
+function startTimer() 
+{
+  isTimerActive = true;
+}
+function restartTimer() 
+{
+  isTimerActive = true;
+  timer = 0;
+}
+function stopTimer()
+{
+  timer = 0;
+  isTimerActive = false;
+}
+function getTime()
+{
+  return timer;
+}
+
 let mainColor = "#4871FF";
 
 $.yank = $.get;
 
 console.log("JS LOADED");
+
 
 function updateChapterTitle(callback) {
   $.get("/api/plan/" + planId + "/currChapter", (data) => {
@@ -39,22 +63,28 @@ $(document).ready(function () {
 
   $("#nextButton").click(() => {
     console.log("clicked next modified");
-    $.yank("/api/" + planId + "/text/next", (data) => {
-      console.log("api get next");
-      console.log(data);
-      $('html,body').scrollTop(0);
-      $(".content").html(data.passages[0]);
-    });
+    $.post("/api/" +planId + "/text/next", 
+      {
+        "time": getTime()
+      },
+      (data) => {
+        restartTimer();
+        console.log("api get next");
+        console.log(data);
+        $('html,body').scrollTop(0);
+        $(".content").html(data.passages[0]);
+      });
   });
 
   $(".plan-read").click(() => {
     console.log("click");
-    $.get("/api/" + planId + "/text", (data) => {
-      console.log("api get");
-      console.log(data);
-      $(".content").html(data.passages[0]);
-      toggleMode();
-    });
+    startTimer();
+    $.get("/api/" + planId + "/text", 
+      (data) => {
+        startTimer();
+        $(".content").html(data.passages[0]);
+        toggleMode();
+      });
   });
 
   $("#back").click(() => {
@@ -64,6 +94,14 @@ $(document).ready(function () {
   $("#stats").click(() => {
     toggleStats();
   });
+
+  window.setInterval(() => 
+    {
+      if (document.visibilityState == "visible" && isTimerActive == true)
+      {
+        timer++;
+      }
+    }, 1000)
 });
 
 function toggleMode() {

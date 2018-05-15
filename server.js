@@ -1,3 +1,5 @@
+//import { start } from 'repl';
+
 /*
 
 IMPORT EVERYTHING
@@ -91,7 +93,7 @@ passport.deserializeUser(function (id, cb) {
 
 const checkLoginMiddleware = function (req, res, next) {
   if (req.user) {
-    console.log("user exists");
+    //console.log("user exists");
     next();
   }
   else {
@@ -101,8 +103,8 @@ const checkLoginMiddleware = function (req, res, next) {
       // DEBUG PATH: logs in automatically if you are not on a valid user account
       if (DEBUG) {
         User.findOne({}, (err, user) => {
-          console.log("found user");
-          console.log(JSON.stringify(user));
+          //console.log("found user");
+          //console.log(JSON.stringify(user));
           req.login(user, function(err){
             if(err) return next(err);
           });
@@ -250,7 +252,11 @@ app.get('/api/users/all', (req, res) => {
 app.post('/api/friends/add', (req, res) => {
   let friendUsername = req.body.username;
   if (!req.user) {
-    res.json({error: 'must be logged in'});
+    res.json({error: 'You must be logged in'});
+  }
+  else if (req.user.friends.indexOf(friendUsername) != -1)
+  {
+    res.json({success: 'Already added friend'});
   }
   else {
     User.findOneAndUpdate(
@@ -260,7 +266,7 @@ app.post('/api/friends/add', (req, res) => {
       {new: true, safe: true, upsert: true},
       (err, friend) => {
         if (err || !friend) {
-          res.json({error: 'could not find username'})
+          res.json({error: 'Could not find username'})
         }
         else {
           User.findByIdAndUpdate(
@@ -276,7 +282,7 @@ app.post('/api/friends/add', (req, res) => {
               // Handle any possible database errors
               if (err) return res.json({error: 'failed to update json', info: err});
               else {
-                res.json({})
+                res.json({success: 'Added friend!'});
               }
             });
         }
@@ -298,6 +304,7 @@ app.get('/api/friends/get/pending', (req, res) => {
 });
 
 // endpoint for friends user is waiting for to respond
+// DEPRECATED
 app.get('/api/friends/get/requested', (req, res) => {
   let friends = req.user.friends;
   let filteredFriends = [];
@@ -316,6 +323,7 @@ app.get('/api/friends/get/confirmed', (req, res) => {
   for (let i = 0; i < friends.length; i++) {
     if (req.user.friendsin.indexOf(friends[i]) != -1) {
       filteredFriends.push({username: friends[i]});
+    
     }
   }
   res.json(filteredFriends);
@@ -418,27 +426,68 @@ app.get('/api/plan/:planId/progress', (req, res) => {
 });
 
 app.get('/api/plan/:planId/streak', (req, res) => {
-  
+ // TODO 
 });
 
-// DEPRECATED
-app.get('/api/text', (req, res) => {
-  console.log("boibobiobib");
-  bibleApi.grabChapter(req.user.currBook, req.user.currChapNum, req, res);
-  User.findByIdAndUpdate(req.user._id, {
-    $push: {
-      log: {"type": "start", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum} 
-    }
+// endpoint to get number of days since start of plan
+app.get('/api/plan/:planId/days', (req, res) => {
+  let startDate = req.user.log[0].date;
+  let diff = Date.now() - startDate;
+  let seconds = diff/1000;
+  let hours = seconds/3600;
+  let days = hours/24;
+  
+  res.json({
+    time: diff,
+    days: days
   })
 });
 
+function getUserLogTime(user, planId)
+{
+  let totalTime = 0;
+  console.log("Plan id: " + JSON.stringify(planId));
+  if (!planId) console.log(JSON.stringify(user.log));
+  for (let i = 0; i < user.log.length; i++) {
+    let log = user.log[i];
+    // if there is no planId, just assume we want all plans
+    if (!planId || log.planId == planId)
+    {
+      if (log.type == "next")
+      {
+        totalTime += Number(log.time);
+      }
+    }
+  }
+  return totalTime;
+}
+
+// NOTE: this must come before the param version or "all"
+// will be matched as a planId
+app.get('/api/plan/all/time', (req, res) => {
+  let time = getUserLogTime(req.user);
+  res.json({
+    "time": time,
+    "hours": time/3600
+  });
+});
+
+app.get('/api/plan/:planId/time', (req, res) => {
+  let time = getUserLogTime(req.user, req.params.planId);
+  res.json({
+    "time": time,
+    "hours": time/3600
+  });
+});
+
+
 app.get("/api/:planId/text", (req, res) => {
   Plan.findById(req.params.planId, (err, plan) => {
-    console.log("CALLED API");
-    console.log(JSON.stringify(plan));
+//    console.log("CALLED API");
+//    console.log(JSON.stringify(plan));
     User.findByIdAndUpdate(req.user._id, {
       $push: {
-        "log": {"type": "start", "currBook": plan.currBook, "currChapNum": plan.currChapNum}
+        "log": {"type": "start", "currBook": plan.currBook, "currChapNum": plan.currChapNum, "date": Date.now(), "planId": plan._id}
       }
     }, (err, user) => {
       console.log("Got text");
@@ -448,6 +497,8 @@ app.get("/api/:planId/text", (req, res) => {
   });
 });
 
+
+/*
 app.get('/api/text/next', (req, res) => {
   // TODO fix this
   const chapterDesc = bibleApi.getNextChapter(req.user.currBook, req.user.currChapNum);
@@ -463,8 +514,10 @@ app.get('/api/text/next', (req, res) => {
     bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
   });
 });
+*/
 
-app.get('/api/:planId/text/next', (req, res) => {
+app.post('/api/:planId/text/next', (req, res) => {
+  let time = req.body.time;
   let planId = req.params.planId;
   Plan.findById(planId, (err, plan) => {
     console.log("running getNextChapter");
@@ -478,7 +531,7 @@ app.get('/api/:planId/text/next', (req, res) => {
       console.log("updated plan");
       User.findByIdAndUpdate(req.user._id, {
         $push: {
-          log: {"type": "next", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum}
+          log: {"type": "next", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum, "date": Date.now(), "time": time, "planId": plan._id}
         }}, (err, user) => {
           console.log("running grab chapter");
           bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
@@ -515,7 +568,7 @@ app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
 });
 
 // plans page (plans page)
-app.get('/plans', (req, res) => {
+app.get('/plans', checkLoginMiddleware, (req, res) => {
   // TODO get plan data before posting page
   // render with ejs
   let plans = [];
@@ -548,7 +601,7 @@ app.get('/plans', (req, res) => {
 });
 
 // login page
-app.get('/login', (req, res) => {
+app.get('/login', checkLoginMiddleware, (req, res) => {
   // render with ejs
   res.render('layout', {
     // set title
@@ -560,16 +613,39 @@ app.get('/login', (req, res) => {
 });
 
 // profile page
-app.get('/profile', (req, res) => {
-  // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Profile',
-    // set page to render in layout
-    page: 'pages/profile.ejs',
-    // context
-    context: getContext(req, res)
-  });
+app.get('/profile/:userName', checkLoginMiddleware, (req, res) => {
+  let userName = req.params.userName;
+  let context = getContext(req, res);
+  if (userName)
+  {
+    console.log("user name: " + userName);
+    let context = getContext(req, res);
+    User.findOne({"username": userName}, (err, user) => 
+    {
+      context.profile = user;
+      console.log("profile: " + JSON.stringify(user));
+      console.log("error: " + JSON.stringify(err));
+      res.render('layout', {
+        title: 'Profile',
+        page: 'pages/profile.ejs',
+        context: context
+      })
+    });
+  }
+  else
+  {
+    console.log("no user name");
+    context.profile = req.user;
+    // render with ejs
+    res.render('layout', {
+      // set title
+      title: 'Profile',
+      // set page to render in layout
+      page: 'pages/profile.ejs',
+      // context
+      context: context
+    });
+  }
 });
 
 // social page
@@ -585,7 +661,7 @@ app.get('/social', checkLoginMiddleware, (req, res) => {
 });
 
 // read page
-app.get('/read', (req, res) => {
+app.get('/read', checkLoginMiddleware, (req, res) => {
   // render with ejs
   res.render('layout', {
     // set title
@@ -595,7 +671,7 @@ app.get('/read', (req, res) => {
   });
 });
 
-app.get('/addplan', (req, res) => {
+app.get('/addplan', checkLoginMiddleware, (req, res) => {
     let context = getContext(req, res);
     context.books = bibleApi.bibleBooks;
 
@@ -607,7 +683,7 @@ app.get('/addplan', (req, res) => {
     })
 });
 
-app.get('/plan/:planId', (req, res) => {
+app.get('/plan/:planId', checkLoginMiddleware, (req, res) => {
   Plan.findById(req.params.planId, (err, plan) => {
     let context = getContext(req, res);
     context.planId = plan._id;
