@@ -1,0 +1,331 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: 'Muli', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+a {
+  color: #4871FF;
+  -webkit-transition: all .35s;
+  -moz-transition: all .35s;
+  transition: all .35s;
+}
+
+a:hover, a:focus {
+  color: #4871FF;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  font-weight: 200;
+  letter-spacing: 1px;
+}
+h1{
+  font-size:32px;
+}
+
+h2{
+  font-size: 24px;
+}
+
+h3{
+  font-size: 16px;
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+#mainNav {
+  border-color: rgba(34, 34, 34, 0.05);
+  background-color: white;
+  -webkit-transition: all .35s;
+  -moz-transition: all .35s;
+  transition: all .35s;
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  font-weight: 200;
+  letter-spacing: 1px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+#mainNav .navbar-brand {
+  color: #4871FF;
+  font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
+  font-weight: 200;
+  letter-spacing: 1px;
+}
+
+#mainNav .navbar-brand:hover {
+  color: #B4C5FF;
+}
+
+#mainNav .navbar-toggler {
+  font-size: 12px;
+  padding: 8px 10px;
+  color: #222222;
+}
+
+#mainNav .navbar-nav > li > a {
+  font-size: 11px;
+  font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+#mainNav .navbar-nav > li > a.active {
+  color: #B4C5FF !important;
+  background-color: transparent;
+}
+
+#mainNav .navbar-nav > li > a.active:hover {
+  background-color: transparent;
+}
+
+#mainNav .navbar-nav > li > a,
+#mainNav .navbar-nav > li > a:focus {
+  color: #222222;
+}
+
+#mainNav .navbar-nav > li > a:hover,
+#mainNav .navbar-nav > li > a:focus:hover {
+  color: #B4C5FF;
+}
+
+@media (min-width: 992px) {
+  #mainNav {
+    border-color: transparent;
+    background-color: transparent;
+  }
+  #mainNav .navbar-brand {
+    color: fade(white, 70%);
+  }
+  #mainNav .navbar-brand:hover {
+    color: #B4C5FF
+  }
+  #mainNav .navbar-nav > li > a,
+  #mainNav .navbar-nav > li > a:focus {
+    color: #4871FF;
+  }
+  #mainNav .navbar-nav > li > a:hover,
+  #mainNav .navbar-nav > li > a:focus:hover {
+    color: white;
+  }
+  #mainNav.navbar-shrink {
+    border-color: rgba(34, 34, 34, 0.1);
+    background-color: white;
+  }
+  #mainNav.navbar-shrink .navbar-brand {
+    color: #222222;
+  }
+  #mainNav.navbar-shrink .navbar-brand:hover, #mainNav.navbar-shrink .navbar-brand:focus {
+    color: #B4C5FF;
+  }
+  #mainNav.navbar-shrink .navbar-nav > li > a,
+  #mainNav.navbar-shrink .navbar-nav > li > a:focus {
+    color: #222222;
+  }
+  #mainNav.navbar-shrink .navbar-nav > li > a:hover,
+  #mainNav.navbar-shrink .navbar-nav > li > a:focus:hover {
+    color: #B4C5FF;
+  }
+}
+
+.btn-outline {
+  color: white;
+  border: 1px solid;
+  border-color: white;
+}
+
+.btn-outline:hover, .btn-outline:focus, .btn-outline:active, .btn-outline.active {
+  color: white;
+  border-color: #fdcc52;
+  background-color: #fdcc52;
+}
+
+.btn {
+  border-radius: 300px;
+  font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.btn-lg {
+  padding: 8px 24px;
+  font-size: 16px;
+  color: white;
+  line-height: 22px;
+  border-radius: 4px;
+  background-color: #4871FF;
+  border: none;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.60);
+}
+
+.navbar-brand img{
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+#resume{
+ padding-top: 40px;
+ text-align: left;
+}
+
+.last-time{
+  position: relative;
+  background-color: blue;
+  color: white;
+  padding: 24px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.60) 0%, rgba(255, 255, 255, 0) 100%), url("../pictures/exodus.jpg");
+  background-size: cover;
+}
+
+.last-time button{
+  float: center;
+}
+
+.plan-labels hr{
+    max-width: 100px;
+    margin: 8px auto 32px;
+    padding: 0;
+    text-align: center;
+    border: none;
+    border-top: solid 2px;
+    border-color: #4971FF;
+}
+
+.label{
+  margin:auto;
+  font-size: 12px;
+}
+
+#current-label, #completed-label{
+  text-align: center;
+}
+
+.link:hover{
+  color: #4871FF;
+}
+
+#completed-plans{
+  display: none;
+}
+
+.header{
+  padding-top: 100px;
+  padding-bottom: 16px;
+}
+
+
+
+.plans-list{
+  display: flex;
+  justify-content: center;
+  padding-bottom: 16px;
+}
+
+
+
+
+.plan {
+  position: relative;
+  height: 56px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 24px;
+  background-color: #4F4F4F;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.60) 0%, rgba(255, 255, 255, 0) 100%), url("../pictures/exodus.jpg");
+  background-size: cover;
+  border-radius:4px 4px 0px 0px;
+}
+
+.plan p {
+  font-size: 24px;
+  position: relative;
+  padding-top:8px;
+  padding-bottom:8px;
+  color: white;
+}
+
+.new-plan {
+  position: relative;
+  height: 40px;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: #E0E0E0;
+  border-radius:4px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.new-plan:hover{
+  background-color: #BDBDBD;
+}
+
+.new-plan p, .fa-plus{
+  display: inline-block;
+  font-size: 20px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding-left: 8px;
+  color: #828282;
+}
+
+.fa-car{
+  display:inline-block;
+}
+
+.progress{
+  position: relative;
+  height: 8px;
+  width: 100%;
+  /* margin-bottom: 16px; */
+  background-color: #E0E0E0;
+  border-radius: 0px 0px 4px 4px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.progress-bar{
+  position: absolute;
+  height: 8px;
+  background-color: #4871FF;
+  border-radius: 0px 0px 0px 4px;
+}
+
+.progress-20{
+    width: 20%;
+}
+
+.progress-complete{
+    width: 100%;
+}
+
+.container{
+  width:65%;
+}
+
+.plan-link{
+  display:block;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.plan-link:hover{
+  opacity: 0.5;
+}
+
+.create-plan-link{
+  width:100%;
+}
+
+
+/* END of my css*/

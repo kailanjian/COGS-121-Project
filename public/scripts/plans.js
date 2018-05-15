@@ -1,5 +1,10 @@
 let isText = false;
 
+
+
+
+
+
 $(document).ready(function () {
   $(".text").hide();
   $("#plan1").click(() => {
@@ -16,6 +21,8 @@ $(document).ready(function () {
     toggleMode();
   });
 });
+
+
 
 function toggleMode() {
   if (!isText) {
