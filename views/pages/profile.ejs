@@ -1,6 +1,6 @@
 <div class="container centered" id="profile-page">
    <!-- <div id="profile-pic" class="circle-stat-circle">&nbsp</div>-->
-    <h4 id="user-name"><%= context.user.username %></h4>
+    <h4 id="user-name"><%= context.profile.username %></h4>
     <p>10th place</p>
 </div>
 <div class="container centered" id="profile-body">
@@ -51,4 +51,7 @@
     <a href="/logout" class="logout-button">Logout</a>
 </div>
 
+<script>
+    let userId = "<%= context.profile._id %>";
+</script>
 <script src="scripts/profile.js"></script>

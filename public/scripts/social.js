@@ -57,6 +57,7 @@ var graphOptions = {
 };
 
 $(document).ready(function () {
+  // append all users to the data list to get a simple dropdown working
   $.get("/api/users/all", (data) => {
     console.log("got data" + data);
     for (let i = 0; i < data.length; i++) {
@@ -64,8 +65,10 @@ $(document).ready(function () {
     }
   });
 
+  // plotting
   $.plot($(".friends-graph"), dataSet, graphOptions);
 
+  // modal
   $(".add-friend-background").hide();
 
   /**
@@ -80,6 +83,7 @@ $(document).ready(function () {
   });
 
 
+  // initialize lists
   updateLists();
 
   // TODO populate pending-friends-list from server data
@@ -89,11 +93,14 @@ $(document).ready(function () {
   $("#friends-data-list-button").click(() => {
     let friend = $("#friends-data-list-list").val();
     $.post("/api/friends/add", {username: friend}, (data) => {
-      if (data.error) {
-        console.log(data.error);
+      if (data.error) 
+      {
+        // TODO replace alert with bootstrap cleaner alert
+        alert(data.error);
       }
-      else {
-        $("#request-friends-list").append(genPendingFriendsListItem(friend, 0));
+      else 
+      {
+        updateLists()
       }
     });
     // add 
@@ -127,10 +134,13 @@ function updateLists() {
       })
     });
   });
+
+  // REMOVED
   $.get("/api/friends/get/requested", (data) => {
     console.log("got requested friends" + JSON.stringify(data));
     $("#request-friends-list").loadTemplate("#request-friend-template", data);
   });
+
   $.get("/api/friends/get/confirmed", (data) => {
     console.log("got confirmed friends" + JSON.stringify(data));
     $("#confirmed-friends-list").loadTemplate("#confirmed-friend-template", data);
