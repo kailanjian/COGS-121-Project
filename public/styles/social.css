@@ -5,7 +5,7 @@
   vertical-align: center;
 }
 
-.add-friend-background {
+.add-friend-background, .add-plan-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -14,7 +14,7 @@
   background: rgba(255, 255, 255, 0.9)
 }
 
-.add-friend {
+.add-friend, .add-plan-container {
   margin-top: 7rem;
   background: white;
   border-radius: 1rem;
@@ -29,7 +29,7 @@
   margin-bottom: 1rem;
 }
 
-.friend-add-btn {
+.friend-add-btn, .plan-add-btn {
   width: 40%
 }
 

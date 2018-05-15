@@ -1,21 +1,25 @@
-<div class="container">
-  <p>Plan Name</p>
-  <input type="text" id="plan-name-select" placeholder="e.g. Bible in 365 Days"> 
-  <p>Start Book</p>
-  <select id="first-book-select">
-    <%for (var bookNum in context.books){%>
-      <option value="<%=context.books[bookNum]%>"><%=context.books[bookNum]%></option>
-    <%}%>
-  </select> 
-  <p>End Book</p>
-  <select id="last-book-select">
-    <%for (var bookNum in context.books) {%>
-      <option value="<%=context.books[bookNum]%>"><%=context.books[bookNum]%></option>
-    <%}%>
-  </select>
-  <button id="cancel-button">Cancel</button>
-  <button id="done-button">Done</button>
-  
+<div class="add-plan-background container ">
+  <div class="add-plan-container container">
+    <div class="plan-add-titles">Plan Name</div>
+    <input type="text" id="plan-name-select" class="form-control" placeholder="e.g. Bible in 365 Days">
+    <div class="plan-add-titles">Start Book</div>
+    <select id="first-book-select">
+      <% for (var bookNum in context.books){ %>
+      <option value="<%= context.books[bookNum] %>"><%= context.books[bookNum] %></option>
+      <% } %>
+    </select>
+    <div class="plan-add-titles">End Book</div>
+    <select id="last-book-select">
+      <% for (var bookNum in context.books) { %>
+      <option value="<%= context.books[bookNum] %>"><%= context.books[bookNum] %></option>
+      <% } %>
+    </select>
+    <div class="centered plan-add-btn-container">
+      <button id="done-button" class="plan-add-btn btn btn-primary">Done</button>
+      <button id="cancel-button" class="plan-add-btn btn btn-danger">Cancel</button>
+    </div>
+  </div>
+
 </div>
 
 <!--

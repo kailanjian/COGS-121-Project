@@ -29,13 +29,11 @@ function getTime()
 
 let mainColor = "#4871FF";
 
-$.yank = $.get;
-
 console.log("JS LOADED");
 
 
 function updateChapterTitle(callback) {
-  $.get("/api/plan/" + planId + "/currChapter", (data) => {
+  $.yank("/api/plan/" + planId + "/currChapter", (data) => {
     console.log("boibooibobioboiib");
     console.log(JSON.stringify(data));
     $("#chapter-title").html(data.currBook + " " + data.currChapNum);
@@ -53,17 +51,29 @@ $(document).ready(function () {
   //update these with actual data
   let chaptersReadToday = 6;
   let dailyChapterGoal = 10;
-  let totalChaptersRead = 100;
-  let totalChaptersGoal = 300;
+
+  // load data for total plan
+  $.yank("/api/plan/" + planId + "/progress", (data) => {
+    loadPlanCircle(data.userChaptersCount, data.totalChapterCount);
+  });
+
+  // yanks data for days since started
+  $.yank("/api/plan/" + planId + "/days", (data) => {
+    $("#plan-days-since").html(Math.round(data.days) + "<br/>");
+  });
+
+  // yanks amount of time spent reading
+  $.yank("/api/plan/" + planId + "/time", (data) => {
+    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
+  });
 
   loadDGCircle(chaptersReadToday, dailyChapterGoal);
-  loadPlanCircle(totalChaptersRead, totalChaptersGoal);
 
   updateChapterTitle();
 
   $("#nextButton").click(() => {
     console.log("clicked next modified");
-    $.post("/api/" +planId + "/text/next", 
+    $.thrust("/api/" +planId + "/text/next", 
       {
         "time": getTime()
       },
@@ -79,7 +89,7 @@ $(document).ready(function () {
   $(".plan-read").click(() => {
     console.log("click");
     startTimer();
-    $.get("/api/" + planId + "/text", 
+    $.yank("/api/" + planId + "/text", 
       (data) => {
         startTimer();
         $(".content").html(data.passages[0]);
