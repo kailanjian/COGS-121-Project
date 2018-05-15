@@ -8,22 +8,21 @@ let reading = false;
 let timer = 0;
 let isTimerActive = false;
 
-function startTimer() 
-{
+function startTimer() {
   isTimerActive = true;
 }
-function restartTimer() 
-{
+
+function restartTimer() {
   isTimerActive = true;
   timer = 0;
 }
-function stopTimer()
-{
+
+function stopTimer() {
   timer = 0;
   isTimerActive = false;
 }
-function getTime()
-{
+
+function getTime() {
   return timer;
 }
 
@@ -43,15 +42,7 @@ function updateChapterTitle(callback) {
   });
 }
 
-$(document).ready(function () {
-  $(".text").hide();
-  $(".graph").hide();
-  $(".back-arrow").hide();
-
-  //update these with actual data
-  let chaptersReadToday = 6;
-  let dailyChapterGoal = 10;
-
+function yankData() {
   // load data for total plan
   $.yank("/api/plan/" + planId + "/progress", (data) => {
     loadPlanCircle(data.userChaptersCount, data.totalChapterCount);
@@ -66,14 +57,25 @@ $(document).ready(function () {
   $.yank("/api/plan/" + planId + "/time", (data) => {
     $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
   });
+}
 
+$(document).ready(function () {
+  $(".text").hide();
+  $(".graph").hide();
+  $(".back-arrow").hide();
+
+  //update these with actual data
+  let chaptersReadToday = 6;
+  let dailyChapterGoal = 10;
+
+  yankData();
   loadDGCircle(chaptersReadToday, dailyChapterGoal);
 
   updateChapterTitle();
 
   $("#nextButton").click(() => {
     console.log("clicked next modified");
-    $.thrust("/api/" +planId + "/text/next", 
+    $.thrust("/api/" + planId + "/text/next",
       {
         "time": getTime()
       },
@@ -89,11 +91,13 @@ $(document).ready(function () {
   $(".plan-read").click(() => {
     console.log("click");
     startTimer();
-    $.yank("/api/" + planId + "/text", 
+    $.yank("/api/" + planId + "/text",
       (data) => {
         startTimer();
+        $(".plan-page").hide();
+        $(".plan-read").hide();
+        $(".text").show();
         $(".content").html(data.passages[0]);
-        toggleMode();
       });
   });
 
@@ -105,37 +109,22 @@ $(document).ready(function () {
     toggleStats();
   });
 
-  window.setInterval(() => 
-    {
-      if (document.visibilityState == "visible" && isTimerActive == true)
-      {
-        timer++;
-      }
-    }, 1000)
+  window.setInterval(() => {
+    if (document.visibilityState == "visible" && isTimerActive == true) {
+      timer++;
+    }
+  }, 1000)
 });
 
 function toggleMode() {
-  if (!isText) {
-    $(".plan-page").hide();
-    $(".plan-read").hide();
-    $(".text").show();
+  if (!$(".text").is(":visible")) {
+    window.location = "/plans";
   } else {
     $(".plan-page").show();
     $(".plan-read").show();
     $(".text").hide();
   }
-  isText = !isText;
 }
-
-//
-// function toggleStats() {
-//   if (isStats == true) {
-//     $(".graph").hide()
-//   } else {
-//     $(".graph").show()
-//   }
-//   isStats = !isStats;
-//}
 
 /*
 Head navbar animation
@@ -199,8 +188,6 @@ function loadPlanCircle(totalRead, totalChapters) {
   $("#total-goal-desc").html(totalRead + "/" + totalChapters + "<br/>chapters read");
 
   loadCircle("#total-plan-completion", totalRead, totalChapters);
-
-
 }
 
 /**

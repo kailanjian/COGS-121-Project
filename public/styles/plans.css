@@ -167,7 +167,7 @@ p {
   border-radius: 300px;
   font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
   letter-spacing: 2px;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
 }
 
 .btn-lg {
@@ -319,10 +319,6 @@ p {
     width: 100%;
 }
 
-.container{
-  width:65%;
-}
-
 .plan-link{
   display:block;
   width: 100%;
@@ -335,6 +331,10 @@ p {
 
 .create-plan-link{
   width:100%;
+}
+
+.content > h2 {
+  font-weight: normal;
 }
 
 
