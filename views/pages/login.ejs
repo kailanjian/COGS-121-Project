@@ -1,42 +1,41 @@
 <!-- data page (sample not sure if we need this) -->
 
 <div class = "container-fluid">
-    <form id = "login-forms" class="form col-md-12 center-block" action = "/login" method = "post">
-        <p class = "h1 text-center">
-            Login
+    <form id = "login-forms" class="form col-md-12 center-block">
+        <p class = "h1 text-center" style="width: 30%; overflow:hidden;">
+            <marquee style="border-radius: 25%; box-shadow: 0px 0px 5px 3px lightgrey; font-family: 'Courier New', Courier, monospace; font-weight: bold; color: white; background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet);">1-800-BIBLE</marquee>
         </p>
         <div class="form-group">
             <input class="form-control input-lg" placeholder="Username" 
-            type="text" name = "username" id="login-username">
+            type="text" id="login-username">
         </div>
         <div class="form-group">
             <input class="form-control input-lg" placeholder="Password" 
-            type="password" name = "password" id="login-password">
+            type="password" id="login-password">
         </div>
         <div class="form-group">
-            <button class="btn btn-primary btn-lg btn-block" id="login-submit-button" type = "submit">Sign In</button>
+            <input type="submit" class="btn btn-primary btn-lg btn-block" id="login-submit-button" value="Sign In">
             <span class="pull-right"><a class = "tog-button" href="#">Register</a></span>
         </div>
     </form>
-    <form id = "reg-forms" class="form col-md-12 center-block" 
-    action = "/register" method = "post">
+    <form id = "reg-forms" class="form col-md-12 center-block">
         <p class = "h1 text-center">
             Register
         </p>
         <div class="form-group">
             <input class="form-control input-lg" placeholder="Username" 
-            type="text" name = "username">
+            type="text" name = "username" id="reg-username">
         </div>
         <div class="form-group">
             <input class="form-control input-lg" placeholder="Password" 
-            type="password" name = "password">
+            type="password" name = "password" id="reg-password">
         </div>
         <div class="form-group">
             <input class="form-control input-lg" placeholder="Verify Password" 
-            type="password" name = "verify">
+            type="password" name = "verify" id="reg-verify">
         </div>
         <div class="form-group">
-            <button class="btn btn-primary btn-lg btn-block" id="register-submit-button" type = "submit">Register</button>
+            <button class="btn btn-primary btn-lg btn-block" id="register-submit-button">Register</button>
             <span class="pull-right"><a class = "tog-button" href="#">Log In</a></span>
         </div>
     </form>

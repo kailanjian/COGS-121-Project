@@ -139,8 +139,7 @@ app.use(passport.session());
 app.use(express.static('public'));
 
 app.post('/login', passport.authenticate('local'), function (req, res) {
-  console.log(req.user);
-  res.redirect('/');
+  res.json({"success": true})
 });
 
 app.get('/logout', function (req, res) {
