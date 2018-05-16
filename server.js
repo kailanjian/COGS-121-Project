@@ -418,7 +418,7 @@ app.get('/api/plan/:planId/progress', (req, res) => {
 });
 
 app.get('/api/plan/:planId/streak', (req, res) => {
-  // TODO
+  
 });
 
 // TODO: TOTAL CHAPTER across plans

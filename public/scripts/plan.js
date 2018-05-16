@@ -48,7 +48,7 @@ function initPlanData() {
 
   // yanks amount of time spent reading
   $.yank("/api/plan/" + planId + "/time", (data) => {
-    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
+    $("#plan-hours-spent").html(Math.round(data.hours * 10) / 10 + "<br/>");
   });
 }
 
@@ -65,7 +65,8 @@ function updatePlanData() {
 
   // yanks amount of time spent reading
   $.yank("/api/plan/" + planId + "/time", (data) => {
-    $("#plan-hours-spent").html(Math.round(data.hours) + "<br/>");
+    console.log("time: " + data.hours);
+    $("#plan-hours-spent").html((Math.round(data.hours * 10) / 10) + "<br/>");
   });
 }
 
@@ -109,7 +110,7 @@ $(document).ready(function () {
         $(".text").show();
         $(".content").html(data.passages[0]);
       });
-  });
+    });
 
   $("#back").click(() => {
     updateChapterTitle(toggleMode());
