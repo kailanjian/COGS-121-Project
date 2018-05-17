@@ -232,7 +232,6 @@ p {
 }
 
 .header{
-  padding-top: 100px;
   padding-bottom: 16px;
 }
 
@@ -333,8 +332,14 @@ p {
   width:100%;
 }
 
-.content > h2 {
-  font-weight: normal;
+.content > h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  font-family: "Roboto", sans-serif;
+}
+
+.content > p {
+  font-family: "Roboto", sans-serif;
+  font-weight: lighter;
 }
 
 

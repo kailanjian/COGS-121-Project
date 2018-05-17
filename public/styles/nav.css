@@ -10,6 +10,7 @@
   flex-direction: row;
   align-items: stretch;
   justify-content: center;
+  background: white;
 }
 
 .nav-icon {

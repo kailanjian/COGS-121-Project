@@ -68,9 +68,6 @@ $(document).ready(function () {
   // plotting
   $.plot($(".friends-graph"), dataSet, graphOptions);
 
-  // modal
-  $(".add-friend-background").hide();
-
   /**
    * UI Events
    */

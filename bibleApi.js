@@ -129,14 +129,19 @@ function findNextBook(currBook) {
 }
 
 function grabChapter(book, chapter, req, res) {
-  let path = biblePrePath + book + "%20" + chapter + bibleOptions;
+  let path = biblePrePath + getBookURI(book) + "%20" + chapter + bibleOptions;
   getText(path, req, res);
+}
+
+function getBookURI(book) {
+  return encodeURIComponent(book.trim());
 }
 
 mExports.grabChapter = grabChapter;
 
 function getText(path, req, sres) {
   let text = '';
+  console.log("qkwehrklqhwkljhrqwlkjhqweklr\n" + path + "\n");
   https.get({
     headers: {"Authorization": bibleToken},
     protocol: "https:",

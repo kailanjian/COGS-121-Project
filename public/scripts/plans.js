@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  $(".add-plan-background").hide();
 
   $("#current-label").click(function () {
     $("#current-plans").show();

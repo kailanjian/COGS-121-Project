@@ -613,18 +613,18 @@ function getContext(req, res) {
 }
 
 // index page (/)
-app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
-  // render with ejs
-  res.render('layout', {
-    // set title
-    title: 'Home',
-    // set page to render in layout
-    page: 'pages/index.ejs'
-  });
-});
+// app.get(/^\/(index)?$/, checkLoginMiddleware, (req, res) => {
+//   // render with ejs
+//   res.render('layout', {
+//     // set title
+//     title: 'Home',
+//     // set page to render in layout
+//     page: 'pages/index.ejs'
+//   });
+// });
 
 // plans page (plans page)
-app.get('/plans', checkLoginMiddleware, (req, res) => {
+app.get(/^\/(plans)?$/, checkLoginMiddleware, (req, res) => {
   // TODO get plan data before posting page
   // render with ejs
   let plans = [];
