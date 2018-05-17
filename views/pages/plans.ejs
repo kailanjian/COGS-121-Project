@@ -121,6 +121,8 @@
       <option value="<%= context.books[bookNum] %>"><%= context.books[bookNum] %></option>
       <% } %>
     </select>
+    <div class="plan-add-titles">Daily Chapter Goal</div>
+    <input type='text' maxlength="2" id="daily-ch-goal-input" class="form-control" onkeypress='validate(event)' />
     <div class="centered plan-add-btn-container">
       <button id="done-button" class="plan-add-btn btn btn-primary">Done</button>
       <button id="cancel-button" class="plan-add-btn btn btn-danger">Cancel</button>

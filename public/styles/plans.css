@@ -8,6 +8,11 @@ body {
   font-family: 'Muli', 'Helvetica', 'Arial', 'sans-serif';
 }
 
+
+#daily-ch-goal-input {
+  width: 2.8rem;
+}
+
 .plan-add-titles {
   font-size: 1.3rem;
   margin-top: .5rem;

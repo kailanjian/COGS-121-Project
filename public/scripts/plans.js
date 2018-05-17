@@ -26,11 +26,25 @@ $(document).ready(function () {
     let firstBook = $("#first-book-select").val();
     let lastBook = $("#last-book-select").val();
     let planName = $("#plan-name-select").val();
+    let dailyGoal = $("#daily-ch-goal-input").val();
+    console.log(dailyGoal);
 
     $.post("/api/plan/add", {
       planName: planName,
       firstBook: firstBook,
-      lastBook: lastBook
+      lastBook: lastBook,
+      goal: dailyGoal
     });
   });
 });
+
+function validate(evt) {
+  var theEvent = evt || window.event;
+  var key = theEvent.keyCode || theEvent.which;
+  key = String.fromCharCode( key );
+  var regex = /[0-9]|[\b]/;
+  if( !regex.test(key) ) {
+    theEvent.returnValue = false;
+    if(theEvent.preventDefault) theEvent.preventDefault();
+  }
+}
