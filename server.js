@@ -6,7 +6,7 @@ IMPORT EVERYTHING
 
 */
 
-const DEBUG = true;
+const DEBUG = false;
 
 const express = require('express'); // used for express.js
 const path = require('path'); // allows filesystem access, and directory helper methods
@@ -139,8 +139,7 @@ app.use(passport.session());
 app.use(express.static('public'));
 
 app.post('/login', passport.authenticate('local'), function (req, res) {
-  console.log(req.user);
-  res.redirect('/');
+  res.json({"success": true})
 });
 
 app.get('/logout', function (req, res) {
@@ -148,6 +147,7 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
+// register a new user
 app.post('/register', (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
@@ -178,7 +178,8 @@ app.post('/register', (req, res) => {
         firstBook: "Genesis",
         lastBook: "Revelation",
         currBook: "Genesis",
-        currChapNum: 1
+        currChapNum: 1,
+        goal: 4
       })
       plan.save((err, plan) => {
         let user = new User({
@@ -357,6 +358,7 @@ app.post('/api/plan/add', (req, res) => {
   let firstBook = req.body.firstBook;
   let lastBook = req.body.lastBook;
   let currBook = req.body.firstBook;
+  let goal = req.body.goal;
   let currChapNum = 1;
 
   let plan = new Plan({
@@ -364,7 +366,8 @@ app.post('/api/plan/add', (req, res) => {
     firstBook: firstBook,
     lastBook: lastBook,
     currBook: currBook,
-    currChapNum: currChapNum
+    currChapNum: currChapNum,
+    goal: goal
   });
 
   plan.save((err, plan) => {
@@ -397,7 +400,6 @@ app.get('/api/plan/:planId/progress', (req, res) => {
 
       console.log(bibleBooks.indexOf(lastBook));
       for (let i = bibleBooks.indexOf(firstBook); i <= bibleBooks.indexOf(lastBook); i++) {
-        console.log("i: " + JSON.stringify(i));
         if (i < bibleBooks.indexOf(plan.currBook)) {
           userChapterCount += bibleApi.bibleChapters[bibleBooks[i]];
         }
@@ -418,9 +420,77 @@ app.get('/api/plan/:planId/progress', (req, res) => {
   });
 });
 
+// TODO: test code
 app.get('/api/plan/:planId/streak', (req, res) => {
-  // TODO
+  Plan.findById(req.params.planId, (err, plan) => {
+    let dayStart = new Date();
+    dayStart.setHours(0, 0, 0, 0);
+    let dayEnd = new Date();
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const dayTime = 24 * 60 * 60 * 60 * 1000;
+    let day = 0;
+    let dayValid = false;
+    do {
+      dayValid = false;
+      let currDayStart = dayStart - dayTime * day;
+      let currDayEnd = dayEnd - dayTime * day;
+
+      let dayChapters = getRangeChapters(req.user, req.params.planId, currDayStart, currDayEnd);
+      if (dayChapters >= plan.goal)
+      {
+        dayValid = true;
+        day++;
+      }
+    } while (dayValid)
+    res.json({"streak": day, "goal": plan.goal});
+  });
 });
+
+// TODO: TOTAL CHAPTER across plans
+
+// helper method to get chapters read in a time range
+function getRangeChapters(user, planId, start, end)
+{
+  let chapters = 0;
+
+  for (let i = 0; i < user.log.length; i++)
+  {
+    let log = user.log[i];
+    if (log.type == "next")
+    {
+      if (log.planId == planId || !planId)
+      {
+        if (log.date < end && log.date > start)
+        {
+          chapters++;
+        }
+      }
+    }
+  }
+  return chapters;
+}
+
+// gets number of chapters today
+function getDailyChapters(user, planId)
+{
+  let start = new Date();
+  start.setHours(0, 0, 0, 0);
+  
+  let end = new Date();
+  end.setHours(23,59,59,9999);
+
+  return getRangeChapters(start, end);
+}
+
+// get number of chapters read today
+app.get('/api/plan/:planId/dailyChapters', (req, res) => {
+  res.json({
+    chapters: getDailyChapters(req.user)
+  })
+});
+
+// TODO: put friend on plan
 
 // endpoint to get number of days since start of plan
 app.get('/api/plan/:planId/days', (req, res) => {
@@ -436,6 +506,7 @@ app.get('/api/plan/:planId/days', (req, res) => {
   })
 });
 
+// helper method to get time from logs of planId
 function getUserLogTime(user, planId) {
   let totalTime = 0;
   console.log("Plan id: " + JSON.stringify(planId));
@@ -462,6 +533,7 @@ app.get('/api/plan/all/time', (req, res) => {
   });
 });
 
+// get time spent on plan
 app.get('/api/plan/:planId/time', (req, res) => {
   let time = getUserLogTime(req.user, req.params.planId);
   res.json({
@@ -471,10 +543,9 @@ app.get('/api/plan/:planId/time', (req, res) => {
 });
 
 
+// get text for plan
 app.get("/api/:planId/text", (req, res) => {
   Plan.findById(req.params.planId, (err, plan) => {
-//    console.log("CALLED API");
-//    console.log(JSON.stringify(plan));
     User.findByIdAndUpdate(req.user._id, {
       $push: {
         "log": {
@@ -492,25 +563,6 @@ app.get("/api/:planId/text", (req, res) => {
     });
   });
 });
-
-
-/*
-app.get('/api/text/next', (req, res) => {
-  // TODO fix this
-  const chapterDesc = bibleApi.getNextChapter(req.user.currBook, req.user.currChapNum);
-  User.findByIdAndUpdate(req.user._id, {
-    $set: {
-      currBook: chapterDesc.book,
-      currChapNum: chapterDesc.chapter
-    },
-    $push: {
-      log: {"type": "next", "currBook": req.user.currBook, "currChapNum": req.user.currChapNum}
-    }
-  }, () => {
-    bibleApi.grabChapter(chapterDesc.book, chapterDesc.chapter, req, res);
-  });
-});
-*/
 
 app.post('/api/:planId/text/next', (req, res) => {
   let time = req.body.time;
@@ -723,6 +775,7 @@ db.once('open', function () {
     lastBook: String,
     currBook: String,
     currChapNum: String,
+    goal: Number
   });
 
   /* initialize collections */

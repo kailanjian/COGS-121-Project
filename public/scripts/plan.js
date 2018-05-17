@@ -115,7 +115,7 @@ $(document).ready(function () {
         $(".text").show();
         $(".content").html(data.passages[0]);
       });
-  });
+    });
 
   $("#back").click(() => {
     updateChapterTitle(toggleMode());
