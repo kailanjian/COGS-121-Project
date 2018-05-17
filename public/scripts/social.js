@@ -2,10 +2,10 @@ const fade_speed = 200;
 
 // graph data
 let friend_data = [
- [30,0],[25,1],[10,2]
+  [30, 0], [25, 1], [10, 2]
 ];
 let dataSet = [
-  { data: friend_data, color: "#CCCCCC" }
+  {data: friend_data, color: "#CCCCCC"}
 ];
 let ticks = [
   [0, "boi"], [1, "new"], [2, "You"]
@@ -20,7 +20,7 @@ var graphOptions = {
     align: "center",
     barWidth: 0.5,
     horizontal: true,
-    fillColor: { colors: [{ opacity: 0.8 }, { opacity: 0.8}] },
+    fillColor: {colors: [{opacity: 0.8}, {opacity: 0.8}]},
     lineWidth: 1
   },
   xaxis: {
@@ -31,7 +31,7 @@ var graphOptions = {
     axisLabelPadding: 10,
     max: 40,
     tickColor: "#5E5E5E",
-    color:"black"
+    color: "black"
   },
   yaxis: {
     axisLabel: "Precious Metals",
@@ -42,7 +42,7 @@ var graphOptions = {
     tickColor: "#5E5E5E",
     ticks: ticks,
     tickLength: 0,
-    color:"black"
+    color: "black"
   },
   legend: {
     noColumns: 0,
@@ -90,13 +90,11 @@ $(document).ready(function () {
   $("#friends-data-list-button").click(() => {
     let friend = $("#friends-data-list-list").val();
     $.post("/api/friends/add", {username: friend}, (data) => {
-      if (data.error) 
-      {
+      if (data.error) {
         // TODO replace alert with bootstrap cleaner alert
         alert(data.error);
       }
-      else 
-      {
+      else {
         updateLists()
       }
     });
@@ -125,7 +123,7 @@ function updateLists() {
         if (data.error) {
           // TODO handle error
         } else {
-          console.log("UPDATING")
+          console.log("UPDATING");
           updateLists();
         }
       })

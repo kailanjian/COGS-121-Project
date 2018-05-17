@@ -37,20 +37,33 @@ function updateChapterTitle(callback) {
 
 function initPlanData() {
   // load data for total plan
-  $.yank("/api/plan/" + planId + "/progress", (data) => {
-    loadPlanCircle(data.userChaptersCount, data.totalChapterCount);
-  });
+  createPlanCircle();
+  createDGCircle();
 
-  getNonCircleData();
+  getPlanData();
 }
 
 /**
  * Yanks data from server for data not in the UI circles
  */
-function getNonCircleData() {
+function getPlanData() {
   // yanks data for days since started
   $.yank("/api/plan/" + planId + "/days", (data) => {
     $("#plan-days-since").html(Math.round(data.days) + "<br/>");
+  });
+
+  $.yank("/api/plan/" + planId + "/progress", (data) => {
+    updatePlanData(data.userChaptersCount, data.totalChapterCount);
+    console.log(data);
+  });
+
+  //streak data
+  $.yank("/api/plan/" + planId + "/streak", (data) => {
+    if(data.goal == undefined) {
+      data.goal = 10;
+    }
+    updateDGCircle(data.readToday, data.goal);
+    $("#plan-streak").html(data.streak);
   });
 
   // yanks amount of time spent reading
@@ -72,7 +85,7 @@ function updatePlanData() {
     updatePlanCircle(data.userChaptersCount, data.totalChapterCount);
   });
 
-  getNonCircleData();
+  getPlanData();
 }
 
 $(document).ready(function () {
@@ -80,12 +93,7 @@ $(document).ready(function () {
   $(".graph").hide();
   $(".back-arrow").hide();
 
-  //update these with actual data
-  let chaptersReadToday = 6;
-  let dailyChapterGoal = 10;
-
   initPlanData();
-  loadDGCircle(chaptersReadToday, dailyChapterGoal);
 
   updateChapterTitle();
 
@@ -115,7 +123,7 @@ $(document).ready(function () {
         $(".text").show();
         $(".content").html(data.passages[0]);
       });
-    });
+  });
 
   $("#back").click(() => {
     updateChapterTitle(toggleMode());
@@ -189,9 +197,8 @@ function hasScrolled() {
  * @param todayRead number of chapters read this day
  * @param dailyChapterGoal daily goal (# of chapters)
  */
-function loadDGCircle(todayRead, dailyChapterGoal) {
-  $("#daily-goal-title").html(todayRead + " of " + dailyChapterGoal);
-  dailyCircle = loadCircle("#daily-goal-completion", todayRead, dailyChapterGoal);
+function createDGCircle() {
+  dailyCircle = loadCircle("#daily-goal-completion");
 }
 
 function updateDGCircle(todayRead, dailyChapterGoal) {
@@ -204,12 +211,8 @@ function updateDGCircle(todayRead, dailyChapterGoal) {
  * @param totalRead total # of chapters read
  * @param totalChapters total # of chapters needed to read to finish
  */
-function loadPlanCircle(totalRead, totalChapters) {
-  let percentText = Math.round(totalRead / totalChapters * 100) + "%";
-  $("#total-goal-title").html(percentText);
-  $("#total-goal-desc").html(totalRead + "/" + totalChapters + "<br/>chapters read");
-
-  planCircle = loadCircle("#total-plan-completion", totalRead, totalChapters);
+function createPlanCircle() {
+  planCircle = loadCircle("#total-plan-completion");
 }
 
 function updatePlanCircle(totalRead, totalChapters) {
@@ -225,7 +228,7 @@ function updatePlanCircle(totalRead, totalChapters) {
  * @param part - how much the user has read
  * @param total - how much the user plans to read
  */
-function loadCircle(element, part, total) {
+function loadCircle(element) {
   let circle = new ProgressBar.Circle(element, {
     color: mainColor,
     // This has to be the same size as the maximum width to
@@ -243,7 +246,6 @@ function loadCircle(element, part, total) {
     }
   });
   //make sure only go through circle once
-  animateCircle(circle, part, total);
   return circle;
 }
 

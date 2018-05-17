@@ -427,6 +427,7 @@ app.get('/api/plan/:planId/streak', (req, res) => {
     dayStart.setHours(0, 0, 0, 0);
     let dayEnd = new Date();
     dayEnd.setHours(23, 59, 59, 999);
+    let dayChapters;
 
     const dayTime = 24 * 60 * 60 * 60 * 1000;
     let day = 0;
@@ -436,33 +437,27 @@ app.get('/api/plan/:planId/streak', (req, res) => {
       let currDayStart = dayStart - dayTime * day;
       let currDayEnd = dayEnd - dayTime * day;
 
-      let dayChapters = getRangeChapters(req.user, req.params.planId, currDayStart, currDayEnd);
-      if (dayChapters >= plan.goal)
-      {
+      dayChapters = getRangeChapters(req.user, req.params.planId, currDayStart, currDayEnd);
+      if (dayChapters >= plan.goal) {
         dayValid = true;
         day++;
       }
-    } while (dayValid)
-    res.json({"streak": day, "goal": plan.goal});
+    } while (dayValid);
+    res.json({"streak": day, "readToday": dayChapters, "goal": plan.goal});
   });
 });
 
 // TODO: TOTAL CHAPTER across plans
 
 // helper method to get chapters read in a time range
-function getRangeChapters(user, planId, start, end)
-{
+function getRangeChapters(user, planId, start, end) {
   let chapters = 0;
 
-  for (let i = 0; i < user.log.length; i++)
-  {
+  for (let i = 0; i < user.log.length; i++) {
     let log = user.log[i];
-    if (log.type == "next")
-    {
-      if (log.planId == planId || !planId)
-      {
-        if (log.date < end && log.date > start)
-        {
+    if (log.type == "next") {
+      if (log.planId == planId || !planId) {
+        if (log.date < end && log.date > start) {
           chapters++;
         }
       }
@@ -472,13 +467,12 @@ function getRangeChapters(user, planId, start, end)
 }
 
 // gets number of chapters today
-function getDailyChapters(user, planId)
-{
+function getDailyChapters(user, planId) {
   let start = new Date();
   start.setHours(0, 0, 0, 0);
-  
+
   let end = new Date();
-  end.setHours(23,59,59,9999);
+  end.setHours(23, 59, 59, 9999);
 
   return getRangeChapters(start, end);
 }
