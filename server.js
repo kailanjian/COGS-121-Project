@@ -407,7 +407,6 @@ app.get('/api/plan/:planId/progress', (req, res) => {
           userChapterCount += plan.currChapNum - 1;
         }
 
-        console.log("i: " + JSON.stringify(i));
         totalChapterCount += bibleApi.bibleChapters[bibleBooks[i]];
       }
 
@@ -556,6 +555,31 @@ app.get("/api/:planId/text", (req, res) => {
       bibleApi.grabChapter(plan.currBook, plan.currChapNum, req, res);
     });
   });
+});
+
+app.get('/api/plan/:planId/timedata', (req, res) => {
+  let timedata = [];
+  for (let i = 0; i < req.user.log.length; i++)
+  {
+    if (req.user.log[i].type == "next" && req.user.log[i].planId == req.params.planId)
+    {
+      timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
+    }
+  }
+  res.json(timedata);
+});
+
+app.get('/api/user/:username/timedata', (req, res) => {
+  let timedata = [];
+  for (let i = 0; i < req.user.log.length; i++)
+  {
+    if (req.user.log[i].type == "next")
+    {
+      timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
+    }
+  }
+  res.json(timedata);
+
 });
 
 app.post('/api/:planId/text/next', (req, res) => {
