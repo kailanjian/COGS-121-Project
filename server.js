@@ -407,7 +407,6 @@ app.get('/api/plan/:planId/progress', (req, res) => {
           userChapterCount += plan.currChapNum - 1;
         }
 
-        console.log("i: " + JSON.stringify(i));
         totalChapterCount += bibleApi.bibleChapters[bibleBooks[i]];
       }
 
@@ -422,14 +421,16 @@ app.get('/api/plan/:planId/progress', (req, res) => {
 
 // TODO: test code
 app.get('/api/plan/:planId/streak', (req, res) => {
+  console.log("streak endpoint entered...");
   Plan.findById(req.params.planId, (err, plan) => {
     let dayStart = new Date();
     dayStart.setHours(0, 0, 0, 0);
     let dayEnd = new Date();
     dayEnd.setHours(23, 59, 59, 999);
     let dayChapters;
+    let currDayChapters = getRangeChapters(req.user, req.params.planId, dayStart, dayEnd);
 
-    const dayTime = 24 * 60 * 60 * 60 * 1000;
+    const dayTime = 24 * 60 * 60 * 1000;
     let day = 0;
     let dayValid = false;
     do {
@@ -443,7 +444,7 @@ app.get('/api/plan/:planId/streak', (req, res) => {
         day++;
       }
     } while (dayValid);
-    res.json({"streak": day, "readToday": dayChapters, "goal": plan.goal});
+    res.json({"streak": day, "readToday": currDayChapters, "goal": plan.goal});
   });
 });
 
@@ -488,8 +489,23 @@ app.get('/api/plan/:planId/dailyChapters', (req, res) => {
 
 // endpoint to get number of days since start of plan
 app.get('/api/plan/:planId/days', (req, res) => {
+  
+  console.log("getting days...");
+  let oldest = Date.now();
+  let log = req.user.log;
+  for (let i = 0; i < log.length; i++)
+  {
+    console.log(log[i]);
+    if (
+      log[i].date < oldest && 
+      log[i].planId == req.params.planId &&
+      log[i].type == "start")
+      {
+        oldest = log[i].date;
+      }
+  }
   let startDate = req.user.log[0].date;
-  let diff = Date.now() - startDate;
+  let diff = Date.now() - oldest;
   let seconds = diff / 1000;
   let hours = seconds / 3600;
   let days = hours / 24;
@@ -556,6 +572,31 @@ app.get("/api/:planId/text", (req, res) => {
       bibleApi.grabChapter(plan.currBook, plan.currChapNum, req, res);
     });
   });
+});
+
+app.get('/api/plan/:planId/timedata', (req, res) => {
+  let timedata = [];
+  for (let i = 0; i < req.user.log.length; i++)
+  {
+    if (req.user.log[i].type == "next" && req.user.log[i].planId == req.params.planId)
+    {
+      timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
+    }
+  }
+  res.json(timedata);
+});
+
+app.get('/api/user/:username/timedata', (req, res) => {
+  let timedata = [];
+  for (let i = 0; i < req.user.log.length; i++)
+  {
+    if (req.user.log[i].type == "next")
+    {
+      timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
+    }
+  }
+  res.json(timedata);
+
 });
 
 app.post('/api/:planId/text/next', (req, res) => {
@@ -667,13 +708,11 @@ app.get('/login', checkLoginMiddleware, (req, res) => {
 app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
   let userName = req.params.userName;
   let context = getContext(req, res);
-  if (userName) {
-    console.log("user name: " + userName);
+  if (userName) 
+  {
     let context = getContext(req, res);
     User.findOne({"username": userName}, (err, user) => {
       context.profile = user;
-      console.log("profile: " + JSON.stringify(user));
-      console.log("error: " + JSON.stringify(err));
       res.render('layout', {
         title: 'Profile',
         page: 'pages/profile.ejs',
@@ -681,7 +720,8 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
       })
     });
   }
-  else {
+  else 
+  {
     console.log("no user name");
     context.profile = req.user;
     // render with ejs
