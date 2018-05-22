@@ -115,7 +115,7 @@ const checkLoginMiddleware = function (req, res, next) {
       }
     }
   }
-}
+};
 
 /*
 
@@ -180,7 +180,7 @@ app.post('/register', (req, res) => {
         currBook: "Genesis",
         currChapNum: 1,
         goal: 4
-      })
+      });
       plan.save((err, plan) => {
         let user = new User({
           username: username,
