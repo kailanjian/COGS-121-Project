@@ -421,14 +421,16 @@ app.get('/api/plan/:planId/progress', (req, res) => {
 
 // TODO: test code
 app.get('/api/plan/:planId/streak', (req, res) => {
+  console.log("streak endpoint entered...");
   Plan.findById(req.params.planId, (err, plan) => {
     let dayStart = new Date();
     dayStart.setHours(0, 0, 0, 0);
     let dayEnd = new Date();
     dayEnd.setHours(23, 59, 59, 999);
     let dayChapters;
+    let currDayChapters = getRangeChapters(req.user, req.params.planId, dayStart, dayEnd);
 
-    const dayTime = 24 * 60 * 60 * 60 * 1000;
+    const dayTime = 24 * 60 * 60 * 1000;
     let day = 0;
     let dayValid = false;
     do {
@@ -442,7 +444,7 @@ app.get('/api/plan/:planId/streak', (req, res) => {
         day++;
       }
     } while (dayValid);
-    res.json({"streak": day, "readToday": dayChapters, "goal": plan.goal});
+    res.json({"streak": day, "readToday": currDayChapters, "goal": plan.goal});
   });
 });
 
