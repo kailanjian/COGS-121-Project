@@ -53,7 +53,7 @@ function getPlanData() {
   });
 
   $.yank("/api/plan/" + planId + "/progress", (data) => {
-    updatePlanData(data.userChaptersCount, data.totalChapterCount);
+    updatePlanCircle(data.userChaptersCount, data.totalChapterCount);
     console.log(data);
   });
 

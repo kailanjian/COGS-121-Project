@@ -487,8 +487,23 @@ app.get('/api/plan/:planId/dailyChapters', (req, res) => {
 
 // endpoint to get number of days since start of plan
 app.get('/api/plan/:planId/days', (req, res) => {
+  
+  console.log("getting days...");
+  let oldest = Date.now();
+  let log = req.user.log;
+  for (let i = 0; i < log.length; i++)
+  {
+    console.log(log[i]);
+    if (
+      log[i].date < oldest && 
+      log[i].planId == req.params.planId &&
+      log[i].type == "start")
+      {
+        oldest = log[i].date;
+      }
+  }
   let startDate = req.user.log[0].date;
-  let diff = Date.now() - startDate;
+  let diff = Date.now() - oldest;
   let seconds = diff / 1000;
   let hours = seconds / 3600;
   let days = hours / 24;
@@ -691,13 +706,11 @@ app.get('/login', checkLoginMiddleware, (req, res) => {
 app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
   let userName = req.params.userName;
   let context = getContext(req, res);
-  if (userName) {
-    console.log("user name: " + userName);
+  if (userName) 
+  {
     let context = getContext(req, res);
     User.findOne({"username": userName}, (err, user) => {
       context.profile = user;
-      console.log("profile: " + JSON.stringify(user));
-      console.log("error: " + JSON.stringify(err));
       res.render('layout', {
         title: 'Profile',
         page: 'pages/profile.ejs',
@@ -705,7 +718,8 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
       })
     });
   }
-  else {
+  else 
+  {
     console.log("no user name");
     context.profile = req.user;
     // render with ejs
