@@ -313,10 +313,7 @@ p {
   height: 8px;
   background-color: #4871FF;
   border-radius: 0px 0px 0px 4px;
-}
-
-.progress-20{
-    width: 20%;
+  width: 0;
 }
 
 .progress-complete{

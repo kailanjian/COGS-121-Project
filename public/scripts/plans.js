@@ -1,4 +1,15 @@
+function loadPercentages() {
+  plansData.forEach( (plan) => {
+    $.yank("/api/plan/" + plan._id + "/progress", (data) => {
+      let progressWidth = Math.round(data.userChaptersCount / data.totalChapterCount * 100);
+        $("#"+plan._id).css("width", progressWidth + "%");
+    })
+  });
+}
+
+
 $(document).ready(function () {
+  loadPercentages();
 
   $("#current-label").click(function () {
     $("#current-plans").show();
@@ -17,7 +28,7 @@ $(document).ready(function () {
     $(".add-plan-background").fadeIn();
   });
 
-  $("#cancel-button").click(()=>{
+  $("#cancel-button").click(() => {
     $(".add-plan-background").fadeOut();
   });
 
@@ -41,10 +52,10 @@ $(document).ready(function () {
 function validate(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
-  key = String.fromCharCode( key );
+  key = String.fromCharCode(key);
   var regex = /[0-9]|[\b]/;
-  if( !regex.test(key) ) {
+  if (!regex.test(key)) {
     theEvent.returnValue = false;
-    if(theEvent.preventDefault) theEvent.preventDefault();
+    if (theEvent.preventDefault) theEvent.preventDefault();
   }
 }
