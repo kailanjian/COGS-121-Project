@@ -1,5 +1,3 @@
-//import { start } from 'repl';
-
 /*
 
 IMPORT EVERYTHING
@@ -187,7 +185,8 @@ app.post('/register', (req, res) => {
           data: {},
           currBook: "Genesis",
           currChapNum: 1,
-          plans: [plan._id]
+          plans: [plan._id],
+          latestPlan: plan._id
         });
         user.save((err, user) => {
           if (err) {
@@ -341,10 +340,13 @@ app.get('/api/plan/:planId/currChapter', (req, res) => {
   let planId = req.params.planId;
   console.log("curr chapter")
   Plan.findById(planId, (err, plan) => {
-    res.send({
-      currBook: plan.currBook,
-      currChapNum: plan.currChapNum
-    })
+    User.findByIdAndUpdate(req.user._id, {$set: {latestPlan: planId}},
+      (err, user) => {
+        res.send({
+          currBook: plan.currBook,
+          currChapNum: plan.currChapNum
+        })
+      });
   });
 });
 
@@ -590,7 +592,6 @@ app.get('/api/user/:username/timedata', (req, res) => {
     }
   }
   res.json(timedata);
-
 });
 
 app.post('/api/:planId/text/next', (req, res) => {
@@ -670,8 +671,31 @@ app.get(/^\/(plans)?$/, checkLoginMiddleware, (req, res) => {
   }, function (err, plans) {
 
     let context = getContext(req, res);
-    context.plans = plans;
+    let completedPlans = [];
+    context.plans = [];
     context.books = bibleApi.bibleBooks;
+
+    for (let i = 0; i < plans.length; i++)
+    {
+      if (plans[i]._id == req.user.latestPlan)
+      {
+        context.latestPlan = plans[i];
+      }
+
+      let planEnd = bibleApi.bibleBooks.indexOf(plans[i].lastBook);
+      let planCurrent = bibleApi.bibleBooks.indexOf(plans[i].currBook);
+
+      if (planCurrent > planEnd)
+      {
+        completedPlans.push(plans[i]);
+      }
+      else
+      {
+        context.plans.push(plans[i]);
+      }
+    }
+
+    context.completedPlans = completedPlans;
 
     console.log("PLANS ARRAY");
     console.log(JSON.stringify(plans));
@@ -782,7 +806,8 @@ db.once('open', function () {
     friendsin: [String],
     log: [],
     data: Object,
-    plans: [String] // items are {planId, currBook, currChapNum}
+    plans: [String], // items are {planId, currBook, currChapNum}
+    latestPlan: String
   });
 
   var authSchema = mongoose.Schema({
