@@ -2,12 +2,14 @@
   <div class="container last-time">
     <p class="label">Last Time:</p>
     <!--connect with backend-->
-    <h1>Put Plan Name Here</h1>
+    <h1><%= context.latestPlan.planName %></h1>
     <!--connect with backend-->
-    <h3>Put Book-name Chapter# Here</h3>
+    <h3><%= context.latestPlan.currBook %> <%= context.latestPlan.currChapNum %></h3>
     <div id="resume">
       <!-- Link to reading page -->
-      <button href="" type="button" class="btn-lg">Resume Reading</button>
+      <form action="/plan/<%= context.latestPlan._id %>">
+        <button href="" type="submit" class="btn-lg">Resume Reading</button>
+      </form>
     </div>
   </div>
 </section>
@@ -59,24 +61,16 @@
   <div class="container">
     <div class="row">
 
-      <a class="plan-link" href="">
+      <% for (var planNum in context.completedPlans){ %>
+      <a class="plan-link" onclick="alert('you are done with this plan!')">
         <div class="col-sm-12 plan">
-          <p>Epistles of Paul</p>
+          <p><%= context.completedPlans[planNum].planName %></p>
         </div>
         <div class="progress">
-          <div class="progress-bar progress-complete"></div>
+          <div id="<%= context.completedPlans[planNum]._id %>" class="progress-bar"></div>
         </div>
       </a>
-
-      <a class="plan-link" href="">
-        <div class="col-sm-12 plan">
-          <p>Daily Proverbs</p>
-        </div>
-        <div class="progress">
-          <div class="progress-bar progress-complete"></div>
-        </div>
-      </a>
-
+      <% } %>
     </div>
   </div>
 </section>
