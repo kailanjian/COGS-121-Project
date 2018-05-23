@@ -585,13 +585,15 @@ app.get('/api/plan/:planId/timedata', (req, res) => {
 });
 
 app.get('/api/user/:username/timedata', (req, res) => {
-  let timedata = [];
-  for (let i = 0; i < req.user.log.length; i++) {
-    if (req.user.log[i].type == "next") {
-      timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
+  User.findOne({"username": req.params.username}, (err, user) => {
+    let timedata = [];
+    for (let i = 0; i < user.log.length; i++) {
+      if (user.log[i].type == "next") {
+        timedata.push({"date": user.log[i].date, "time": user.log[i].time});
+      }
     }
-  }
-  res.json(timedata);
+    res.json(timedata);
+  })
 });
 
 app.post('/api/:planId/text/next', (req, res) => {
