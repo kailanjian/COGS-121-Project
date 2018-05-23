@@ -1,50 +1,151 @@
 let readPercentageData = [
-    {label: "done", data: 10, color: "#ffb900"},
-    {label: "not done", data: 30, color: "#fcf2d7"}
+  {label: "done", data: 10, color: "#ffb900"},
+  {label: "not done", data: 30, color: "#fcf2d7"}
 ];
 
 let hoursReadData = [];
 let hoursReadAverages = [];
 
-$(document).ready(function () {
-    //generate random hours read data
-    for (let i = 0; i < 30; i++) {
-        let randomTime = 3 * Math.random();
-        hoursReadData.push([i, randomTime]);
-    }
+var dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"];
 
-    //generate moving averages
-    for (let i = 2; i < 28; i++) {
-        let time = 0;
-        for (let x = -2; x <= 2; x++) {
-            time += hoursReadData[i + x][1];
-        }
-        time /= 5;
-        hoursReadAverages.push([i, time]);
-    }
+var options = {
+  series: {
+  },
+  bars: {
+    align: "center",
+    barWidth: 0.5,
+  },
+  xaxes: [{
+    mode: "time",
+    tickFormatter: function (val, axis) {
+      return dayOfWeek[new Date(val).getDay()];
+    },
+    color: "black",
+  }],
+  yaxis: {
+    color: "black",
+    tickDecimals: 2,
+  },
+};
 
-    $.plot('#percent-read-chart', readPercentageData, {
-        series: {
-            pie: {
-                innerRadius: 0.5,
-                radius: .9,
-                show: true,
-                label: {
-                    show: false
-                },
-                stroke: {
-                    width: 0
-                }
-            }
-        },
-        legend: {
-            show: false
-        }
+let dataSet = [
+  {
+    label: "Hours Read",
+    data: hoursReadData,
+    bars: {
+      show: true,
+      align: "right",
+      barWidth: 24 * 60 * 60 * 600,
+      lineWidth:1
+    }
+  }
+];
+
+function yankProfileData(callback) {
+  $.yank('/api/user/' + username + "/timedata", (data) => {
+    processProfileData(data);
+    callback();
+  });
+}
+
+function processProfileData(data) {
+  let dayAndTime = {};
+  data.forEach((element) => {
+    let date = new Date(element.date);
+    let day = JSON.stringify({
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+      year: date.getFullYear(),
     });
+    if (dayAndTime[day]) {
+      dayAndTime[day] = parseInt(dayAndTime[day]) + parseInt(element.time);
+    } else {
+      dayAndTime[day] = element.time;
+    }
+  });
 
-    $("#percent-read-nums").html(
-        readPercentageData[0].data + "/" + (readPercentageData[0].data + readPercentageData[1].data)
-    );
+  for (let e in dayAndTime) {
+    if (dayAndTime[e]) {
+      let d = [transformDateData(e), dayAndTime[e] / 3600];
+      hoursReadData.push(d);
+    }
+  }
+  console.log(hoursReadData);
+}
 
-    $.plot(".profile-chart", [hoursReadData, hoursReadAverages]);
+function transformDateData(dateElement) {
+  let d = JSON.parse(dateElement);
+  return new Date(d.year, d.month, d.day).getTime();
+}
+
+$(document).ready(function () {
+  yankProfileData(() => {
+    $.plot(".profile-chart", dataSet, options);
+  });
+
+  $.plot('#percent-read-chart', readPercentageData, {
+    series: {
+      pie: {
+        innerRadius: 0.5,
+        radius: .9,
+        show: true,
+        label: {
+          show: false
+        },
+        stroke: {
+          width: 0
+        }
+      }
+    },
+    legend: {
+      show: false
+    }
+  });
+
+  $("#percent-read-nums").html(
+    readPercentageData[0].data + "/" + (readPercentageData[0].data + readPercentageData[1].data)
+  );
+
+  $(".profile-chart").UseTooltip();
 });
+
+$.fn.UseTooltip = function () {
+  $(this).bind("plothover", function (event, pos, item) {
+    if (item) {
+      if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+        previousPoint = item.dataIndex;
+        previousLabel = item.series.label;
+        $("#tooltip").remove();
+
+        var x = item.datapoint[0];
+        var y = item.datapoint[1];
+        var date = new Date(x);
+        var color = item.series.color;
+
+        showTooltip(item.pageX, item.pageY, color,
+          "<strong>" + item.series.label + "</strong><br>" +
+          (date.getMonth() + 1) + "/" + date.getDate() +
+          " : <strong>" + y + "</strong> (USD/oz)");
+      }
+    } else {
+      $("#tooltip").remove();
+      previousPoint = null;
+    }
+  });
+};
+
+function showTooltip(x, y, color, contents) {
+  $('<div id="tooltip">' + contents + '</div>').css({
+    position: 'absolute',
+    display: 'none',
+    top: y - 40,
+    left: x - 120,
+    border: '2px solid ' + color,
+    padding: '3px',
+    'font-size': '9px',
+    'border-radius': '5px',
+    'background-color': '#fff',
+    'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+    opacity: 0.9
+  }).appendTo("body").fadeIn(200);
+}

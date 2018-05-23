@@ -489,20 +489,18 @@ app.get('/api/plan/:planId/dailyChapters', (req, res) => {
 
 // endpoint to get number of days since start of plan
 app.get('/api/plan/:planId/days', (req, res) => {
-  
+
   console.log("getting days...");
   let oldest = Date.now();
   let log = req.user.log;
-  for (let i = 0; i < log.length; i++)
-  {
+  for (let i = 0; i < log.length; i++) {
     console.log(log[i]);
     if (
-      log[i].date < oldest && 
+      log[i].date < oldest &&
       log[i].planId == req.params.planId &&
-      log[i].type == "start")
-      {
-        oldest = log[i].date;
-      }
+      log[i].type == "start") {
+      oldest = log[i].date;
+    }
   }
   let startDate = req.user.log[0].date;
   let diff = Date.now() - oldest;
@@ -576,10 +574,8 @@ app.get("/api/:planId/text", (req, res) => {
 
 app.get('/api/plan/:planId/timedata', (req, res) => {
   let timedata = [];
-  for (let i = 0; i < req.user.log.length; i++)
-  {
-    if (req.user.log[i].type == "next" && req.user.log[i].planId == req.params.planId)
-    {
+  for (let i = 0; i < req.user.log.length; i++) {
+    if (req.user.log[i].type == "next" && req.user.log[i].planId == req.params.planId) {
       timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
     }
   }
@@ -588,10 +584,8 @@ app.get('/api/plan/:planId/timedata', (req, res) => {
 
 app.get('/api/user/:username/timedata', (req, res) => {
   let timedata = [];
-  for (let i = 0; i < req.user.log.length; i++)
-  {
-    if (req.user.log[i].type == "next")
-    {
+  for (let i = 0; i < req.user.log.length; i++) {
+    if (req.user.log[i].type == "next") {
       timedata.push({"date": req.user.log[i].date, "time": req.user.log[i].time});
     }
   }
@@ -708,8 +702,7 @@ app.get('/login', checkLoginMiddleware, (req, res) => {
 app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
   let userName = req.params.userName;
   let context = getContext(req, res);
-  if (userName) 
-  {
+  if (userName) {
     let context = getContext(req, res);
     User.findOne({"username": userName}, (err, user) => {
       context.profile = user;
@@ -720,8 +713,7 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
       })
     });
   }
-  else 
-  {
+  else {
     console.log("no user name");
     context.profile = req.user;
     // render with ejs
