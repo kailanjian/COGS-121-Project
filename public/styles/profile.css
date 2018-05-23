@@ -1,92 +1,17 @@
-
-
-.big-profile-stat-container {
-    display: inline-flex;
-    align-items: center;
-    margin-top: .5rem;
-}
-
-.page-rate-stat {
-    width: 115px;
-    height: 115px;
-    /*border-radius: 65px;*/
-    border-radius: 30px;
-    font-size: .7rem;
-    border: solid 4px cadetblue;
-    /*background-color: cadetblue;*/
-    display: inline-block;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    /*margin-top: 1rem;*/
-}
-
-.stat-title {
-    padding-top: 1rem;
-    font-size: 2rem;
-    font-weight: bold;
-}
-
-.small-box {
-    width: 10px;
-    height: 10px;
-    background-color: cadetblue;
-    border-radius: 5px;
-    display: inline-block;
-}
-
-.profile-small-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-}
-
-.profile-chart {
-    width: 100%;
-    height: 150px;
-    display: inline-block;
-    /*background-color: cadetblue;*/
-}
-
-.logout-button {
-    width: 95%;
-    display: inline-block;
-    height: 30px;
-    border-radius: 15px;
-    background-color: orangered;
-    margin-top: 1.5rem;
-}
-
-#percent-read-container {
-    height: 130px;
-    width: 130px;
-    display: inline-block;
-    position: relative;
-}
-
-#percent-read-chart, #percent-read-title {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#percent-read-title {
-    margin-top: .6rem;
-    z-index: 10;
+#profile-pic {
+  height: 6rem;
+  width: 6rem;
+  border-radius: 50%;
+  border: grey 2px solid;
+  margin: .5rem;
+  display: inline-block;
 }
 
 #profile-header {
-    background: linear-gradient(var(--sec-bg-color), var(--main-hi-color));
-    padding: 1rem 1rem 0.1rem 1rem;
+  background-color: #EEEEEE;
 }
 
-#profile-body {
-    box-shadow: 0 -3px 100px 0px #000;
-}
+.profile-chart {
+  height: 12rem;
 
-#profile-chart-title {
-    margin-top: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: bold;
 }
