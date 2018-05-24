@@ -13,5 +13,10 @@
 
 .profile-chart {
   height: 12rem;
+}
 
+.profile-chart-container {
+  border-top: 1px grey solid;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }

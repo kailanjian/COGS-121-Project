@@ -675,24 +675,24 @@ app.get(/^\/(plans)?$/, checkLoginMiddleware, (req, res) => {
     context.plans = [];
     context.books = bibleApi.bibleBooks;
 
-    for (let i = 0; i < plans.length; i++)
-    {
-      if (plans[i]._id == req.user.latestPlan)
-      {
+    for (let i = 0; i < plans.length; i++) {
+      if (plans[i]._id == req.user.latestPlan) {
         context.latestPlan = plans[i];
       }
 
       let planEnd = bibleApi.bibleBooks.indexOf(plans[i].lastBook);
       let planCurrent = bibleApi.bibleBooks.indexOf(plans[i].currBook);
 
-      if (planCurrent > planEnd)
-      {
+      if (planCurrent > planEnd) {
         completedPlans.push(plans[i]);
       }
-      else
-      {
+      else {
         context.plans.push(plans[i]);
       }
+    }
+
+    if (!context.latestPlan) {
+      context.latestPlan = plans[0];
     }
 
     context.completedPlans = completedPlans;

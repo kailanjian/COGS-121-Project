@@ -1,8 +1,12 @@
 <div class="container centered" id="profile-header">
   <div id="profile-pic">&nbsp</div>
   <h4 id="user-name"><%= context.profile.username %></h4>
+  <div class="profile-chart-container">
+    <h3>Hours Read Each Day</h3>
+    <div class="profile-chart container"></div>
+  </div>
+  <h1>Chapters Read This Week: <h1 id="pr-chapters-read"></h1></h1>
 </div>
-<div class="profile-chart container"></div>
 
 <script>
   let userId = "<%= context.profile._id %>";
