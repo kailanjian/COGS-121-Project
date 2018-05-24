@@ -20,3 +20,40 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+
+.logout-button {
+  width: 50%;
+}
+
+.row {
+  margin: 1.3rem .5rem 1.3rem .5rem;
+}
+
+.col {
+  padding: 1rem;
+}
+
+.col > h1 {
+  line-height: .8rem;
+  padding-top: .5rem;
+}
+
+.col > span {
+  font-size: .8rem;
+}
+
+.col-left {
+  border-right: 1px lightgrey solid;
+}
+
+.col-right {
+  border-left: 1px lightgrey solid;
+}
+
+.col-top {
+  border-bottom: 1px lightgrey solid;
+}
+
+.col-bottom {
+  border-top: 1px lightgrey solid;
+}

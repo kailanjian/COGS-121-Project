@@ -6,11 +6,15 @@ let readPercentageData = [
 let hoursReadData = [];
 let chaptersReadData = [];
 let chaptersReadThisWeek = 0;
+let totalChaptersRead = 0;
+let totalTimeRead = 0;
+let averageTimePerChapter = 0;
+let timeThisWeek = 0;
 const sevenDaysInMS = 604800000;
 
-var dayOfWeek = ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"];
+const dayOfWeek = ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"];
 
-var options = {
+const options = {
   series: {},
   bars: {
     align: "center",
@@ -71,18 +75,28 @@ function withinWeek(date) {
 
 
 function processProfileData(data) {
+  // each element in data is a chapter
+  totalChaptersRead = data.length;
+
   let profileData = combineEachDaysData(data);
   putDataIntoArrays(profileData);
+
+  // avg time per chapter
+  averageTimePerChapter = (totalTimeRead / totalChaptersRead) / 3600;
 }
 
 function combineEachDaysData(data) {
   let profileData = {};
   data.forEach((element) => {
+    // add up time for total time
+    totalTimeRead += parseInt(element.time) / 3600;
+
     let date = new Date(element.date);
     if (withinWeek(date)) {
       // we do this to combine single days into one
       let day = JSON.stringify(minimizeDayData(date));
       if (profileData[day]) {
+        timeThisWeek += parseInt(profileData[day].time) / 60;
         profileData[day].time = parseInt(profileData[day].time) + parseInt(element.time);
         profileData[day].chapters++;
       } else {
@@ -145,7 +159,10 @@ function transformDateData(d) {
 $(document).ready(function () {
   yankProfileData(() => {
     $.plot(".profile-chart", dataSet, options);
-    $("#pr-chapters-read").html(chaptersReadThisWeek);
+    $("#ch-read-wk").html(chaptersReadThisWeek);
+    $("#ch-read-total").html(totalChaptersRead);
+    $("#time-total").html(Math.round(totalTimeRead));
+    $("#time-per-ch").html(Math.round(timeThisWeek));
   });
 
   $.plot('#percent-read-chart', readPercentageData, {

@@ -1,11 +1,41 @@
 <div class="container centered" id="profile-header">
-  <div id="profile-pic">&nbsp</div>
+  <img src="/pictures/profile.jpg" id="profile-pic"/>
   <h4 id="user-name"><%= context.profile.username %></h4>
   <div class="profile-chart-container">
-    <h3>Hours Read Each Day</h3>
+    <h3>Hours / Minutes Read Each Day</h3>
     <div class="profile-chart container"></div>
   </div>
-  <h1>Chapters Read This Week: <h1 id="pr-chapters-read"></h1></h1>
+</div>
+
+<div class="centered container">
+  <div class="row">
+    <div class="col col-top col-left">
+      <h1 id="ch-read-wk"></h1>
+      <span>
+        chapters read this week
+      </span>
+    </div>
+    <div class="col col-top col-right">
+      <h1 id="ch-read-total"></h1>
+      <span>
+        total chapters read
+      </span>
+    </div>
+    <div class="w-100"></div>
+    <div class="col col-bottom col-left">
+      <h1 id="time-total"></h1>
+      <span>
+        total hours read
+      </span>
+    </div>
+    <div class="col col-bottom col-right">
+      <h1 id="time-per-ch"></h1>
+      <span>
+        minutes read this week
+      </span>
+    </div>
+  </div>
+  <a href="/logout" class="btn btn-danger logout-button">Logout</a>
 </div>
 
 <script>
