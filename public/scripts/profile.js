@@ -59,6 +59,7 @@ let dataSet = [
 ];
 
 function yankProfileData(callback) {
+  console.log(username);
   $.yank('/api/user/' + username + "/timedata", (data) => {
     processProfileData(data);
     callback();
@@ -70,6 +71,7 @@ function yankProfileData(callback) {
  * @param day - day we're checking
  */
 function withinWeek(date) {
+  console.log(date);
   return new Date() - date < sevenDaysInMS;
 }
 

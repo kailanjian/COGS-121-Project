@@ -21,25 +21,16 @@ var graphOptions = {
     lineWidth: 1
   },
   xaxis: {
-    axisLabel: "Chapters Read Last 7 Days",
-    axisLabelUseCanvas: true,
-    axisLabelFontSizePixels: 12,
-    axisLabelFontFamily: 'Verdana, Arial',
-    axisLabelPadding: 10,
-    max: 40,
+    // max: 40,
+    min: 0,
     tickColor: "#5E5E5E",
     color: "black"
   },
   yaxis: {
-    axisLabel: "Precious Metals",
-    axisLabelUseCanvas: true,
-    axisLabelFontSizePixels: 12,
-    axisLabelFontFamily: 'Verdana, Arial',
-    axisLabelPadding: 3,
     tickColor: "#5E5E5E",
     ticks: ticks,
     tickLength: 0,
-    color: "black"
+    color: "black",
   },
   legend: {
     noColumns: 0,
@@ -136,18 +127,24 @@ function updateLists() {
   $.get("/api/friends/get/confirmed", (data) => {
     console.log("got confirmed friends" + JSON.stringify(data));
     updateGraphData(data);
+
+    //get link to profile
+    data.forEach((e) => {
+      e.link = "/profile/" + e.username;
+    });
+    console.log(data);
     $("#confirmed-friends-list").loadTemplate("#confirmed-friend-template", data);
   });
 }
 
 
 function updateGraphData(data) {
-  for(let friendIndex = 0; friendIndex < data.length; friendIndex++) {
+  for (let friendIndex = 0; friendIndex < data.length; friendIndex++) {
     let e = data[friendIndex];
     $.yank('/api/user/' + e.username + '/timedata', (td) => {
       let chaptersReadThisWeek = 0;
-      for(let i = 0; i < td.length; i++) {
-        if(withinWeek(td[i]).date) {
+      for (let i = 0; i < td.length; i++) {
+        if (withinWeek(td[i].date)) {
           chaptersReadThisWeek++;
         }
       }
@@ -156,7 +153,7 @@ function updateGraphData(data) {
       ticks.push([friendIndex, e.username]);
 
       // if last element create the graph
-      if(friend_data.length == data.length) {
+      if (friend_data.length == data.length) {
         console.log(friend_data);
         console.log(ticks);
         $.plot($(".friends-graph"), dataSet, graphOptions);
