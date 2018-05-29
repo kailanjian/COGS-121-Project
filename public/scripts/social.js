@@ -79,11 +79,7 @@ $(document).ready(function () {
 
 
   // initialize lists
-  updateLists(() => {
-
-    console.log(dataSet);
-    $.plot($(".friends-graph"), dataSet, graphOptions);
-  });
+  updateLists();
 
   // TODO populate pending-friends-list from server data
   // TODO populate request-friends-list from server data
@@ -113,7 +109,7 @@ function genPendingFriendsListItem(friendName, friendId) {
   return '<li class="pending-friends-list-item" id=' + friendId + ' >' + friendName + '</li>';
 }
 
-function updateLists(callback) {
+function updateLists() {
   $.get("/api/friends/get/pending", (data) => {
     console.log("got pending friends" + JSON.stringify(data));
     $("#pending-friends-list").loadTemplate("#pending-friend-template", data);
@@ -139,29 +135,32 @@ function updateLists(callback) {
 
   $.get("/api/friends/get/confirmed", (data) => {
     console.log("got confirmed friends" + JSON.stringify(data));
-    updateGraphs(data);
+    updateGraphData(data);
     $("#confirmed-friends-list").loadTemplate("#confirmed-friend-template", data);
-
-    if (callback) {
-      callback();
-    }
   });
 }
 
 
-function updateGraphs(data) {
+function updateGraphData(data) {
   for(let friendIndex = 0; friendIndex < data.length; friendIndex++) {
     let e = data[friendIndex];
     $.yank('/api/user/' + e.username + '/timedata', (td) => {
-      let chaptersReadThisWeek = 19;
-      // for(let i = 0; i < td.length; i++) {
-      //   if(withinWeek(td[i]).date) {
-      //     chaptersReadThisWeek++;
-      //   }
-      // }
+      let chaptersReadThisWeek = 0;
+      for(let i = 0; i < td.length; i++) {
+        if(withinWeek(td[i]).date) {
+          chaptersReadThisWeek++;
+        }
+      }
 
       friend_data.push([chaptersReadThisWeek, friendIndex]);
       ticks.push([friendIndex, e.username]);
+
+      // if last element create the graph
+      if(friend_data.length == data.length) {
+        console.log(friend_data);
+        console.log(ticks);
+        $.plot($(".friends-graph"), dataSet, graphOptions);
+      }
     });
   }
 }
