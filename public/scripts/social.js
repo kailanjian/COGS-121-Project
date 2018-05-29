@@ -1,15 +1,12 @@
+const sevenDaysInMS = 604800000;
 const fade_speed = 200;
 
 // graph data
-let friend_data = [
-  [30, 0], [25, 1], [10, 2]
-];
+let friend_data = [];
 let dataSet = [
   {data: friend_data, color: "#CCCCCC"}
 ];
-let ticks = [
-  [0, "boi"], [1, "new"], [2, "You"]
-];
+let ticks = [];
 var graphOptions = {
   series: {
     bars: {
@@ -65,9 +62,6 @@ $(document).ready(function () {
     }
   });
 
-  // plotting
-  $.plot($(".friends-graph"), dataSet, graphOptions);
-
   /**
    * UI Events
    */
@@ -79,9 +73,17 @@ $(document).ready(function () {
     $(".add-friend-background").fadeOut(fade_speed);
   });
 
+  $("#friends-data-list-button").click(() => {
+    $(".add-friend-background").fadeOut(fade_speed);
+  });
+
 
   // initialize lists
-  updateLists();
+  updateLists(() => {
+
+    console.log(dataSet);
+    $.plot($(".friends-graph"), dataSet, graphOptions);
+  });
 
   // TODO populate pending-friends-list from server data
   // TODO populate request-friends-list from server data
@@ -111,14 +113,13 @@ function genPendingFriendsListItem(friendName, friendId) {
   return '<li class="pending-friends-list-item" id=' + friendId + ' >' + friendName + '</li>';
 }
 
-function updateLists() {
+function updateLists(callback) {
   $.get("/api/friends/get/pending", (data) => {
     console.log("got pending friends" + JSON.stringify(data));
     $("#pending-friends-list").loadTemplate("#pending-friend-template", data);
 
     $(".confirm-friend-req-button").click(function () {
       console.log("button");
-      console.log(this);
       $.post("/api/friends/add", {username: $(this).attr("data-friend-username")}, (data) => {
         if (data.error) {
           // TODO handle error
@@ -138,6 +139,33 @@ function updateLists() {
 
   $.get("/api/friends/get/confirmed", (data) => {
     console.log("got confirmed friends" + JSON.stringify(data));
+    updateGraphs(data);
     $("#confirmed-friends-list").loadTemplate("#confirmed-friend-template", data);
+
+    if (callback) {
+      callback();
+    }
   });
+}
+
+
+function updateGraphs(data) {
+  for(let friendIndex = 0; friendIndex < data.length; friendIndex++) {
+    let e = data[friendIndex];
+    $.yank('/api/user/' + e.username + '/timedata', (td) => {
+      let chaptersReadThisWeek = 19;
+      // for(let i = 0; i < td.length; i++) {
+      //   if(withinWeek(td[i]).date) {
+      //     chaptersReadThisWeek++;
+      //   }
+      // }
+
+      friend_data.push([chaptersReadThisWeek, friendIndex]);
+      ticks.push([friendIndex, e.username]);
+    });
+  }
+}
+
+function withinWeek(date) {
+  return new Date() - date < sevenDaysInMS;
 }
