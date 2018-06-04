@@ -7,7 +7,7 @@
 
 .add-friend-background, .add-plan-background {
   display: none;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -17,6 +17,7 @@
 
 .add-friend, .add-plan-container {
   margin-top: 7rem;
+  max-width: 720px;
   background: white;
   border-radius: 1rem;
   border: grey 1px solid;
@@ -60,7 +61,7 @@
 }
 
 .friends-section-title {
-  border-bottom: lightgrey 1px solid;
+  border-bottom:  var(--main-color) 2px solid;
   margin-bottom: .5rem;
 }
 
@@ -72,7 +73,8 @@
 
 .friend-picture {
   border-radius: 50%;
-  background-color: lightgrey;
+  background-image: url("/pictures/profile.jpg");
+  background-size: cover;
   height: 3rem;
   width: 3rem;
   margin-right: 1rem;
@@ -94,9 +96,8 @@
 
 .friend-list-item {
   display: block;
-  border-bottom: 1px lightgrey solid;
+  /*border-bottom: 1px lightgrey solid;*/
   padding-bottom: .5rem;
-  margin-bottom: .5rem;
 }
 
 .friend-list-item:last-child {

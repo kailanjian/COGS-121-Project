@@ -160,8 +160,6 @@ function updateGraphData(data) {
 
       // if last element create the graph
       if (friend_data.length == data.length) {
-        console.log(friend_data);
-        console.log(ticks);
         $.plot($(".friends-graph"), dataSet, graphOptions);
       }
     });
