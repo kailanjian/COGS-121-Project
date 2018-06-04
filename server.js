@@ -1,4 +1,16 @@
 /*
+In this file we wrote all the server code
+- Code to authorize users and login, and save their data, 
+and store it in the form of sessions.
+- API code to perform functions like listing users,
+adding friends, get pending/confirmed friends, plan data
+(current chapter, progress, streak, days on plan, plan text,
+times and dates of each bible reading session)
+- Routing for all the pages, which renders data using .ejs
+formatting.
+- database code which initializes the database and mongoose
+and schemas
+/*
 
 IMPORT EVERYTHING
 

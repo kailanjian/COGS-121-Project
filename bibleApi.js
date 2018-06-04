@@ -1,3 +1,10 @@
+/*
+connects the online bible api to our code.
+gets chapters of text from the api, as well
+as helps with computing next chapter to be used
+when fetching for frontend
+*/ 
+
 // export functions
 let mExports = module.exports = {};
 
