@@ -1,3 +1,8 @@
+/*
+define the nav style
+fix the nav to the bottom and decorate it
+*/
+
 .nav {
   position: fixed;
   bottom: 0;

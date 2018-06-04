@@ -1,3 +1,8 @@
+/*
+css for progress data
+and some other page layouts
+*/
+
 * {
   margin:0;
 }
@@ -84,4 +89,3 @@ header h1{
 #navbar li{  
     display: inline-block; 
     padding: 16px 48px;
-}
