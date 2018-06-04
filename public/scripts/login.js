@@ -1,3 +1,10 @@
+/*
+frontend js for the login page.
+posts to backend and handles alternating between
+login and register mode. displays errors that 
+backend generates
+*/
+
 $(document).ready(function () {
     $("#reg-forms").hide();
     console.log("boi");

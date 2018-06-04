@@ -1,5 +1,6 @@
 // main javascript file
 // Note: ALL VARIABLES HERE WILL BE GLOBAL
+/*
 let isText = false;
 let isStats = false;
 let reading = false;

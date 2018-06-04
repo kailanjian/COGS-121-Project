@@ -1,3 +1,9 @@
+/* 
+frontend js for plans page
+handles progress fills bar using progress from 
+backend endpoints
+*/
+
 function loadPercentages() {
   plansData.forEach( (plan) => {
     $.yank("/api/plan/" + plan._id + "/progress", (data) => {

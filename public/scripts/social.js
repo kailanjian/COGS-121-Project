@@ -1,3 +1,9 @@
+/*
+frontend js for social page
+loads in friends from backend and also 
+loads in chart of friends progress
+*/
+
 const sevenDaysInMS = 604800000;
 const fade_speed = 200;
 

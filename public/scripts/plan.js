@@ -1,3 +1,10 @@
+/*
+frontend js for plan page
+handles filling the progress displays and displaying
+text as needed. gets variables from ejs context through
+script tag in ejs
+*/
+
 // TIMER CODE
 let timer = 0;
 let isTimerActive = false;

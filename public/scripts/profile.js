@@ -1,3 +1,10 @@
+/*
+frontend js for profile page
+plots time data into graph on profile page. fills in data 
+from backend with jquery. much computation on filling
+chart is done on the front end
+*/
+
 let readPercentageData = [
   {label: "done", data: 10, color: "#ffb900"},
   {label: "not done", data: 30, color: "#fcf2d7"}
