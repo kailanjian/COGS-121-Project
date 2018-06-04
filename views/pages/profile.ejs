@@ -35,10 +35,14 @@
       </span>
     </div>
   </div>
+  <% if (logout) {%>
   <a href="/logout" class="btn btn-danger logout-button">Logout</a>
+  <% } %>
 </div>
 
 <script>
+  let hi = "<%= logout %>";
+  console.log(hi);
   let userId = "<%= context.profile._id %>";
   let username = "<%= context.profile.username %>"
 </script>

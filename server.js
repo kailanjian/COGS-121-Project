@@ -747,7 +747,8 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
       res.render('layout', {
         title: 'Profile',
         page: 'pages/profile.ejs',
-        context: context
+        context: context,
+        logout: false
       })
     });
   }
@@ -761,7 +762,8 @@ app.get('/profile/:userName?', checkLoginMiddleware, (req, res) => {
       // set page to render in layout
       page: 'pages/profile.ejs',
       // context
-      context: context
+      context: context,
+      logout: true,
     });
   }
 });
